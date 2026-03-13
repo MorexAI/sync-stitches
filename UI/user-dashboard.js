@@ -410,8 +410,8 @@ function monthLabel(ts) {
   return d.toLocaleString(undefined, { month: "long", year: "numeric" })
 }
 
-function renderHistoryTimeline(items) {
-  const wrap = document.getElementById("history-timeline")
+function renderHistoryTimeline(items, targetId) {
+  const wrap = document.getElementById(targetId || "history-panel-timeline")
   if (!wrap) return
   wrap.innerHTML = ""
 
@@ -632,9 +632,10 @@ function wireSidebar() {
   const closeBtn = document.getElementById("menu-close-btn")
   const sidebar = document.getElementById("sidebar")
   const backdrop = document.getElementById("sidebar-backdrop")
+  const historyBackdrop = document.getElementById("history-backdrop")
+  const historyCloseBtn = document.getElementById("history-close-btn")
   const logoutBtn = document.getElementById("sidebar-logout")
   const notificationsDialog = document.getElementById("notifications-dialog")
-  const historyDialog = document.getElementById("history-dialog")
 
   function open() {
     document.body.classList.add("sidebar-open")
@@ -646,9 +647,19 @@ function wireSidebar() {
     if (profileBtn) profileBtn.setAttribute("aria-expanded", "false")
   }
 
+  function openHistory() {
+    document.body.classList.add("history-open")
+  }
+
+  function closeHistory() {
+    document.body.classList.remove("history-open")
+  }
+
   if (profileBtn) profileBtn.addEventListener("click", open)
   if (closeBtn) closeBtn.addEventListener("click", close)
   if (backdrop) backdrop.addEventListener("click", close)
+  if (historyBackdrop) historyBackdrop.addEventListener("click", closeHistory)
+  if (historyCloseBtn) historyCloseBtn.addEventListener("click", closeHistory)
 
   if (sidebar) {
     sidebar.addEventListener("click", (e) => {
@@ -664,8 +675,8 @@ function wireSidebar() {
       }
       if (nav === "history") {
         e.preventDefault()
-        renderHistoryTimeline(loadHistory())
-        if (historyDialog && typeof historyDialog.showModal === "function") historyDialog.showModal()
+        renderHistoryTimeline(loadHistory(), "history-panel-timeline")
+        openHistory()
         close()
         return
       }

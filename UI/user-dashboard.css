@@ -129,6 +129,7 @@ body{
 .dark-mode .billing-row,
 .dark-mode .sidebar-link,
 .dark-mode .notice,
+.dark-mode .timeline-card,
 .dark-mode .table-row--head,
 .dark-mode .upgrade-option{
   background:rgba(255,255,255,0.06);
@@ -223,6 +224,59 @@ body{
 body.sidebar-open .sidebar-backdrop{
   background:rgba(0,0,0,0.55);
   pointer-events:auto;
+}
+
+.history-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:18;
+  border:none;
+  background:rgba(0,0,0,0.0);
+  pointer-events:none;
+  transition:background 0.45s ease;
+}
+
+body.history-open .history-backdrop{
+  background:rgba(0,0,0,0.55);
+  pointer-events:auto;
+}
+
+.history-panel{
+  position:fixed;
+  top:0;
+  right:0;
+  height:100vh;
+  width:min(92vw, 560px);
+  background:var(--nav-bg);
+  border-left:1px solid var(--card-border);
+  transform:translateX(102%);
+  transition:transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index:21;
+  display:flex;
+  flex-direction:column;
+}
+
+body.history-open .history-panel{
+  transform:translateX(0);
+}
+
+.history-panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+  padding:1.1rem 1rem;
+  border-bottom:1px solid var(--card-border);
+}
+
+.history-panel-title{
+  font-size:1.25rem;
+  letter-spacing:0.3px;
+}
+
+.history-panel-body{
+  padding:1rem;
+  overflow:auto;
 }
 
 .sidebar{

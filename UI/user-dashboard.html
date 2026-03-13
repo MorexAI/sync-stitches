@@ -28,6 +28,7 @@
 
   <div class="layout">
     <button class="sidebar-backdrop" id="sidebar-backdrop" type="button" aria-label="Close menu"></button>
+    <button class="history-backdrop" id="history-backdrop" type="button" aria-label="Close history"></button>
     <aside class="sidebar" id="sidebar" aria-label="Dashboard menu">
       <div class="sidebar-top">
         <div class="sidebar-title marcellus-regular">Menu</div>
@@ -47,6 +48,16 @@
           <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🚪</span>Log out</span>
         </button>
       </nav>
+    </aside>
+
+    <aside class="history-panel" id="history-panel" aria-label="History panel">
+      <div class="history-panel-head">
+        <div class="history-panel-title marcellus-regular">History</div>
+        <button class="icon-btn" id="history-close-btn" type="button" aria-label="Close history">×</button>
+      </div>
+      <div class="history-panel-body">
+        <div class="history-timeline" id="history-panel-timeline"></div>
+      </div>
     </aside>
 
     <main class="shell">
@@ -141,32 +152,6 @@
                 <div class="billing-value billing-value--balance" id="membership-balance">—</div>
                 <button class="icon-btn icon-btn--sm" id="balance-toggle" type="button" aria-label="Show balance" aria-pressed="false">👁</button>
               </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="card card--wide" id="history" aria-label="Fit check history">
-          <div class="card-head">
-            <h2 class="card-title marcellus-regular">Recent Fit Checks</h2>
-            <div class="history-controls">
-              <input class="search" id="history-search" type="search" placeholder="Search company..." aria-label="Search company">
-              <select class="range" id="history-range" aria-label="Filter date range">
-                <option value="7">Last 7 days</option>
-                <option value="30">Last 30 days</option>
-                <option value="all" selected>All</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="table-wrap" role="region" aria-label="Fit checks list" tabindex="0">
-            <div class="table">
-              <div class="table-row table-row--head marcellus-regular">
-                <div>Date</div>
-                <div>Company</div>
-                <div>Garment</div>
-                <div>Result</div>
-              </div>
-              <div id="history-list"></div>
             </div>
           </div>
         </article>
@@ -274,21 +259,6 @@
       </div>
       <div class="dialog-body">
         <div class="notifications" id="notifications-list"></div>
-      </div>
-      <div class="dialog-actions">
-        <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
-      </div>
-    </form>
-  </dialog>
-
-  <dialog class="dialog" id="history-dialog">
-    <form method="dialog" class="dialog-card">
-      <div class="dialog-head">
-        <div class="dialog-title marcellus-regular">History</div>
-        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
-      </div>
-      <div class="dialog-body">
-        <div class="history-timeline" id="history-timeline"></div>
       </div>
       <div class="dialog-actions">
         <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
