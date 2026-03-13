@@ -179,6 +179,6 @@ passwordToggleButtons.forEach((btn) => {
 
     btn.setAttribute("aria-pressed", isPassword ? "true" : "false")
     btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password")
-    btn.textContent = isPassword ? "🙈" : "👁"
+    btn.textContent = isPassword ? "/" : "👁"
   })
 })
