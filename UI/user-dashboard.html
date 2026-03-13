@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StitchSync | App User Dashboard</title>
+
+  <link rel="stylesheet" href="user-dashboard.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Marcellus&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html">STITCH<span>SYNC</span></a>
+    <div class="topbar-actions">
+      <span class="role-badge marcellus-regular">App User</span>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle theme">🌙</button>
+      <button class="pill-btn pill-btn--ghost" id="logout-btn" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="hero">
+      <h1 class="hero-title great-vibes-regular">Your Profile</h1>
+      <p class="hero-subtitle marcellus-regular">Preferences, membership, and recent fit checks.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card" aria-label="Profile">
+        <div class="card-head">
+          <h2 class="card-title marcellus-regular">Profile</h2>
+          <button class="pill-btn pill-btn--primary" id="edit-profile-btn" type="button">Edit Profile</button>
+        </div>
+
+        <div class="profile">
+          <div class="profile-main">
+            <div class="profile-name marcellus-regular" id="profile-name">—</div>
+            <div class="profile-meta" id="profile-email">—</div>
+          </div>
+          <div class="profile-lines">
+            <div class="profile-line">
+              <div class="profile-label marcellus-regular">Location</div>
+              <div class="profile-value" id="profile-location">—</div>
+            </div>
+            <div class="profile-line">
+              <div class="profile-label marcellus-regular">Phone</div>
+              <div class="profile-value" id="profile-phone">—</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" aria-label="Size and Fit Preferences">
+        <div class="card-head">
+          <h2 class="card-title marcellus-regular">Size & Fit</h2>
+          <div class="summary-pill marcellus-regular" id="fit-summary">Size: — • Shape: —</div>
+        </div>
+
+        <form class="prefs" id="prefs-form">
+          <div class="field">
+            <label class="marcellus-regular" for="size">Clothing size</label>
+            <select id="size" required>
+              <option value="" selected>Select size</option>
+              <option value="XS">XS</option>
+              <option value="S">S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="XXL">XXL</option>
+              <option value="XXXL">XXXL</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="marcellus-regular" for="shape">Body shape</label>
+            <select id="shape" required>
+              <option value="" selected>Select shape</option>
+              <option value="hourglass">Hourglass</option>
+              <option value="pear">Pear</option>
+              <option value="inverted-pear">Inverted Pear</option>
+              <option value="triangle">Triangle</option>
+              <option value="inverted-triangle">Inverted Triangle</option>
+              <option value="rectangle">Rectangle</option>
+            </select>
+          </div>
+          <button class="pill-btn pill-btn--primary" type="submit">Save Preferences</button>
+        </form>
+      </article>
+
+      <article class="card" aria-label="Membership and Billing">
+        <div class="card-head">
+          <h2 class="card-title marcellus-regular">Membership</h2>
+          <button class="pill-btn pill-btn--ghost" id="upgrade-btn" type="button">Upgrade</button>
+        </div>
+
+        <div class="billing">
+          <div class="billing-row">
+            <div class="billing-label marcellus-regular">Tier</div>
+            <div class="billing-value" id="membership-tier">—</div>
+          </div>
+          <div class="billing-row">
+            <div class="billing-label marcellus-regular">Renewal</div>
+            <div class="billing-value" id="membership-renewal">—</div>
+          </div>
+          <div class="billing-row">
+            <div class="billing-label marcellus-regular">Balance / Credits</div>
+            <div class="billing-value" id="membership-balance">—</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card card--wide" aria-label="Fit check history">
+        <div class="card-head">
+          <h2 class="card-title marcellus-regular">Recent Fit Checks</h2>
+          <div class="history-controls">
+            <input class="search" id="history-search" type="search" placeholder="Search company..." aria-label="Search company">
+            <select class="range" id="history-range" aria-label="Filter date range">
+              <option value="7">Last 7 days</option>
+              <option value="30">Last 30 days</option>
+              <option value="all" selected>All</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap" role="region" aria-label="Fit checks list" tabindex="0">
+          <div class="table">
+            <div class="table-row table-row--head marcellus-regular">
+              <div>Date</div>
+              <div>Company</div>
+              <div>Garment</div>
+              <div>Result</div>
+            </div>
+            <div id="history-list"></div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <dialog class="dialog" id="profile-dialog">
+    <form method="dialog" class="dialog-card" id="profile-form">
+      <div class="dialog-head">
+        <div class="dialog-title marcellus-regular">Edit Profile</div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="field">
+          <label class="marcellus-regular" for="profileFullName">Full name</label>
+          <input id="profileFullName" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileEmail">Email</label>
+          <input id="profileEmail" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileCountry">Country</label>
+          <select id="profileCountry" autocomplete="country-name" required>
+            <option value="" selected>Select country</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profilePhone">Phone</label>
+          <input id="profilePhone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileState">State</label>
+          <input id="profileState" type="text" autocomplete="address-level1" list="profile-state-list" required>
+          <datalist id="profile-state-list"></datalist>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profilePostalCode">Postal code</label>
+          <input id="profilePostalCode" type="text" autocomplete="postal-code" required>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileTier">Membership tier</label>
+          <select id="profileTier" required>
+            <option value="Basic">Basic</option>
+            <option value="Pro">Pro</option>
+            <option value="Elite">Elite</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileBalance">Balance / Credits</label>
+          <input id="profileBalance" type="text" placeholder="Credits left: 12" required>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button class="pill-btn pill-btn--ghost" value="cancel" type="button" id="profile-cancel">Cancel</button>
+        <button class="pill-btn pill-btn--primary" value="default" type="submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="upgrade-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div class="dialog-title marcellus-regular">Upgrade Membership</div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="upgrade-grid">
+          <button class="upgrade-option" value="Basic" type="button" data-tier="Basic">
+            <div class="upgrade-title marcellus-regular">Basic</div>
+            <div class="upgrade-sub">Essentials for casual fitting</div>
+          </button>
+          <button class="upgrade-option" value="Pro" type="button" data-tier="Pro">
+            <div class="upgrade-title marcellus-regular">Pro</div>
+            <div class="upgrade-sub">More fit checks & priority</div>
+          </button>
+          <button class="upgrade-option" value="Elite" type="button" data-tier="Elite">
+            <div class="upgrade-title marcellus-regular">Elite</div>
+            <div class="upgrade-sub">Unlimited checks & premium brands</div>
+          </button>
+        </div>
+        <div class="upgrade-hint marcellus-regular">Prototype: selecting a tier updates your profile.</div>
+      </div>
+      <div class="dialog-actions">
+        <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="user-dashboard.js"></script>
+</body>
+</html>

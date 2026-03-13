@@ -52,7 +52,7 @@ function redirectAfterAuth(role) {
     window.location.href = "dashboard/dashboard.html"
     return
   }
-  window.location.href = "index.html"
+  window.location.href = "user-dashboard.html"
 }
 
 const countryOptions = [
@@ -398,8 +398,9 @@ function wireSignup() {
   function syncRoleFields() {
     const role = String(roleSelect?.value || "").trim()
     const isManufacturer = role === "manufacturer"
+    const hasAccountType = role === "manufacturer" || role === "app"
 
-    if (manufacturerFields) manufacturerFields.hidden = !isManufacturer
+    if (manufacturerFields) manufacturerFields.hidden = !hasAccountType
 
     if (nameLabel) nameLabel.textContent = isManufacturer ? "Business name" : "Full name"
     if (nameInput) {
@@ -409,7 +410,7 @@ function wireSignup() {
 
     const shouldRequire = (el) => {
       if (!el) return
-      if (isManufacturer) el.setAttribute("required", "")
+      if (hasAccountType) el.setAttribute("required", "")
       else el.removeAttribute("required")
     }
 
@@ -494,23 +495,20 @@ function wireSignup() {
     if (password !== confirm) return showError("Passwords do not match.")
     if (role !== "manufacturer" && role !== "app") return showError("Please choose an account type.")
 
-    const manufacturerProfile =
-      role === "manufacturer"
-        ? {
-            businessName: name,
-            country: String(countryInput?.value || "").trim(),
-            phone: String(phoneInput?.value || "").trim(),
-            state: String(stateInput?.value || "").trim(),
-            postalCode: String(postalCodeInput?.value || "").trim(),
-          }
-        : null
-
-    if (role === "manufacturer") {
-      if (!manufacturerProfile.country) return showError("Please enter your country.")
-      if (!manufacturerProfile.phone) return showError("Please enter your phone.")
-      if (!manufacturerProfile.state) return showError("Please enter your state.")
-      if (!manufacturerProfile.postalCode) return showError("Please enter your postal code.")
+    const contactProfile = {
+      country: String(countryInput?.value || "").trim(),
+      phone: String(phoneInput?.value || "").trim(),
+      state: String(stateInput?.value || "").trim(),
+      postalCode: String(postalCodeInput?.value || "").trim(),
     }
+
+    if (!contactProfile.country) return showError("Please select your country.")
+    if (!contactProfile.phone) return showError("Please enter your phone.")
+    if (!contactProfile.state) return showError("Please enter your state.")
+    if (!contactProfile.postalCode) return showError("Please enter your postal code.")
+
+    const manufacturerProfile = role === "manufacturer" ? { businessName: name } : null
+    const appUserProfile = role === "app" ? { fullName: name } : null
 
     const accounts = readAccounts()
     const existing = accounts.find((a) => String(a.email || "").toLowerCase() === email)
@@ -524,7 +522,9 @@ function wireSignup() {
       email,
       password,
       role,
+      contactProfile,
       manufacturerProfile,
+      appUserProfile,
       createdAt: Date.now(),
     })
 
