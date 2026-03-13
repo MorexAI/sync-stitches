@@ -29,6 +29,42 @@ function readAccounts() {
   }
 }
 
+function slugifyUsernameBase(fullName) {
+  const base = String(fullName || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, "")
+    .replace(/\s+/g, ".")
+    .replace(/\.+/g, ".")
+    .replace(/^\./, "")
+    .replace(/\.$/, "")
+  return base || "user"
+}
+
+function hashShort(text) {
+  const s = String(text || "")
+  let h = 2166136261
+  for (let i = 0; i < s.length; i += 1) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  const out = (h >>> 0).toString(36)
+  return out.slice(0, 4).padEnd(4, "0")
+}
+
+function generateUsernameUnique(fullName, email, accounts) {
+  const base = `${slugifyUsernameBase(fullName)}_${hashShort(email || fullName)}`
+  const taken = new Set((accounts || []).map((a) => String(a?.appUserProfile?.username || "").toLowerCase()).filter(Boolean))
+  if (!taken.has(base.toLowerCase())) return base
+  let i = 2
+  while (i < 9999) {
+    const candidate = `${base}-${i}`
+    if (!taken.has(candidate.toLowerCase())) return candidate
+    i += 1
+  }
+  return `${base}-${Date.now().toString(36).slice(-4)}`
+}
+
 function writeAccounts(accounts) {
   localStorage.setItem("stitchSync_accounts", JSON.stringify(accounts))
 }
@@ -459,8 +495,10 @@ function wireSignup() {
   if (roleSelect && roleFromQuery) roleSelect.value = roleFromQuery
 
   const manufacturerFields = document.getElementById("manufacturer-fields")
+  const dobField = document.getElementById("dob-field")
   const nameLabel = document.getElementById("name-label")
   const nameInput = document.getElementById("name")
+  const dobInput = document.getElementById("dob")
   const countryInput = document.getElementById("country")
   const phoneCodeSelect = document.getElementById("phoneCode")
   const phoneInput = document.getElementById("phone")
@@ -489,8 +527,10 @@ function wireSignup() {
     const role = String(roleSelect?.value || "").trim()
     const isManufacturer = role === "manufacturer"
     const hasAccountType = role === "manufacturer" || role === "app"
+    const isAppUser = role === "app"
 
     if (manufacturerFields) manufacturerFields.hidden = !hasAccountType
+    if (dobField) dobField.hidden = !isAppUser
 
     if (nameLabel) nameLabel.textContent = isManufacturer ? "Business name" : "Full name"
     if (nameInput) {
@@ -510,6 +550,11 @@ function wireSignup() {
     shouldRequire(stateInput)
     shouldRequire(cityInput)
     shouldRequire(postalCodeInput)
+
+    if (dobInput) {
+      if (isAppUser) dobInput.setAttribute("required", "")
+      else dobInput.removeAttribute("required")
+    }
   }
 
   function setStateSuggestions(countryName) {
@@ -633,12 +678,14 @@ function wireSignup() {
     const password = String(document.getElementById("password")?.value || "")
     const confirm = String(document.getElementById("confirm")?.value || "")
     const role = String(roleSelect?.value || "").trim()
+    const dob = String(dobInput?.value || "").trim()
 
     if (!name) return showError(role === "manufacturer" ? "Please enter your business name." : "Please enter your name.")
     if (!email.includes("@")) return showError("Please enter a valid email.")
     if (password.length < 6) return showError("Password must be at least 6 characters.")
     if (password !== confirm) return showError("Passwords do not match.")
     if (role !== "manufacturer" && role !== "app") return showError("Please choose an account type.")
+    if (role === "app" && !dob) return showError("Please enter your date of birth.")
 
     const countryName = String(countryInput?.value || "").trim()
     const expectedDial = String(countryOptions.find((c) => c.name === countryName)?.dial || "").trim()
@@ -662,9 +709,10 @@ function wireSignup() {
     if (!contactProfile.postalCode) return showError("Please enter your postal code.")
 
     const manufacturerProfile = role === "manufacturer" ? { businessName: name } : null
-    const appUserProfile = role === "app" ? { fullName: name } : null
-
     const accounts = readAccounts()
+    const username = role === "app" ? generateUsernameUnique(name, email, accounts) : ""
+    const appUserProfile = role === "app" ? { fullName: name, username, dob } : null
+
     const existing = accounts.find((a) => String(a.email || "").toLowerCase() === email)
     if (existing) {
       window.location.href = "userlogin.html?email=" + encodeURIComponent(email)

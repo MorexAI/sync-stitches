@@ -64,7 +64,7 @@
       <section class="hero">
         <div class="welcome marcellus-regular">Welcome back!</div>
         <h1 class="hero-title marcellus-regular" id="welcome-name">— ✨</h1>
-        <p class="hero-subtitle marcellus-regular">Your profile, preferences, and recent fit checks.</p>
+        <p class="hero-subtitle marcellus-regular">Your profile, measurements, and fit history.</p>
       </section>
 
       <section class="grid">
@@ -79,55 +79,44 @@
               <div class="avatar" id="profile-avatar" aria-label="Profile photo"></div>
               <div class="profile-main">
                 <div class="profile-name marcellus-regular" id="profile-name">—</div>
-                <div class="profile-meta" id="profile-email">—</div>
+                <div class="profile-meta" id="profile-username">—</div>
               </div>
             </div>
             <div class="profile-lines">
               <div class="profile-line">
-                <div class="profile-label marcellus-regular">Location</div>
-                <div class="profile-value" id="profile-location">—</div>
+                <div class="profile-label marcellus-regular">Size & Fit</div>
+                <div class="profile-value" id="profile-size-fit">—</div>
               </div>
               <div class="profile-line">
-                <div class="profile-label marcellus-regular">Phone</div>
-                <div class="profile-value" id="profile-phone">—</div>
+                <div class="profile-label marcellus-regular">Birthday</div>
+                <div class="profile-value" id="profile-birthday">—</div>
               </div>
             </div>
           </div>
         </article>
 
-        <article class="card" aria-label="Size and Fit Preferences">
+        <article class="card" aria-label="Body Measurements">
           <div class="card-head">
-            <h2 class="card-title marcellus-regular">Size & Fit</h2>
-            <div class="summary-pill marcellus-regular" id="fit-summary">Size: — • Shape: —</div>
+            <h2 class="card-title marcellus-regular">Body Measurements</h2>
           </div>
-
-          <form class="prefs" id="prefs-form">
+          <form class="measurements" id="measurements-form">
             <div class="field">
-              <label class="marcellus-regular" for="size">Clothing size</label>
-              <select id="size" required>
-                <option value="" selected>Select size</option>
-                <option value="XS">XS</option>
-                <option value="S">S</option>
-                <option value="M">M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="XXL">XXL</option>
-                <option value="XXXL">XXXL</option>
-              </select>
+              <label class="marcellus-regular" for="mHeight">Height (cm)</label>
+              <input id="mHeight" type="number" min="80" max="250" inputmode="numeric" placeholder="170" required>
             </div>
             <div class="field">
-              <label class="marcellus-regular" for="shape">Body shape</label>
-              <select id="shape" required>
-                <option value="" selected>Select shape</option>
-                <option value="hourglass">Hourglass</option>
-                <option value="pear">Pear</option>
-                <option value="inverted-pear">Inverted Pear</option>
-                <option value="triangle">Triangle</option>
-                <option value="inverted-triangle">Inverted Triangle</option>
-                <option value="rectangle">Rectangle</option>
-              </select>
+              <label class="marcellus-regular" for="mChest">Chest (cm)</label>
+              <input id="mChest" type="number" min="40" max="200" inputmode="numeric" placeholder="96" required>
             </div>
-            <button class="pill-btn pill-btn--primary" type="submit">Save Preferences</button>
+            <div class="field">
+              <label class="marcellus-regular" for="mWaist">Waist (cm)</label>
+              <input id="mWaist" type="number" min="35" max="200" inputmode="numeric" placeholder="82" required>
+            </div>
+            <div class="field">
+              <label class="marcellus-regular" for="mHip">Hip (cm)</label>
+              <input id="mHip" type="number" min="40" max="220" inputmode="numeric" placeholder="98" required>
+            </div>
+            <button class="pill-btn pill-btn--primary" type="submit">Save Measurements</button>
           </form>
         </article>
 
@@ -171,6 +160,10 @@
           <input id="profileFullName" type="text" autocomplete="name" required>
         </div>
         <div class="field">
+          <label class="marcellus-regular" for="profileUsername">Username</label>
+          <input id="profileUsername" type="text" autocomplete="username" readonly>
+        </div>
+        <div class="field">
           <label class="marcellus-regular" for="profileAvatar">Profile picture</label>
           <input id="profileAvatar" type="file" accept="image/*">
         </div>
@@ -185,10 +178,6 @@
           </select>
         </div>
         <div class="field">
-          <label class="marcellus-regular" for="profilePhone">Phone</label>
-          <input id="profilePhone" type="tel" autocomplete="tel" required>
-        </div>
-        <div class="field">
           <label class="marcellus-regular" for="profileState">State</label>
           <input id="profileState" type="text" autocomplete="address-level1" list="profile-state-list" required>
           <datalist id="profile-state-list"></datalist>
@@ -201,6 +190,10 @@
         <div class="field">
           <label class="marcellus-regular" for="profilePostalCode">Postal code</label>
           <input id="profilePostalCode" type="text" autocomplete="postal-code" required>
+        </div>
+        <div class="field">
+          <label class="marcellus-regular" for="profileDob">Date of birth</label>
+          <input id="profileDob" type="date" autocomplete="bday" required>
         </div>
         <div class="field">
           <label class="marcellus-regular" for="profileTier">Membership tier</label>

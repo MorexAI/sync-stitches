@@ -232,6 +232,88 @@ function getInitials(name) {
   return initials || "U"
 }
 
+function slugifyUsernameBase(fullName) {
+  const base = String(fullName || "")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, "")
+    .replace(/\s+/g, ".")
+    .replace(/\.+/g, ".")
+    .replace(/^\./, "")
+    .replace(/\.$/, "")
+  return base || "user"
+}
+
+function hashShort(text) {
+  const s = String(text || "")
+  let h = 2166136261
+  for (let i = 0; i < s.length; i += 1) {
+    h ^= s.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  const out = (h >>> 0).toString(36)
+  return out.slice(0, 4).padEnd(4, "0")
+}
+
+function generateUsername(fullName, email) {
+  const base = slugifyUsernameBase(fullName)
+  const suffix = hashShort(email || fullName)
+  return `${base}_${suffix}`
+}
+
+function zodiacFor(month, day) {
+  const m = Number(month)
+  const d = Number(day)
+  if (m === 1) return d >= 20 ? "Aquarius" : "Capricorn"
+  if (m === 2) return d >= 19 ? "Pisces" : "Aquarius"
+  if (m === 3) return d >= 21 ? "Aries" : "Pisces"
+  if (m === 4) return d >= 20 ? "Taurus" : "Aries"
+  if (m === 5) return d >= 21 ? "Gemini" : "Taurus"
+  if (m === 6) return d >= 21 ? "Cancer" : "Gemini"
+  if (m === 7) return d >= 23 ? "Leo" : "Cancer"
+  if (m === 8) return d >= 23 ? "Virgo" : "Leo"
+  if (m === 9) return d >= 23 ? "Libra" : "Virgo"
+  if (m === 10) return d >= 23 ? "Scorpio" : "Libra"
+  if (m === 11) return d >= 22 ? "Sagittarius" : "Scorpio"
+  if (m === 12) return d >= 22 ? "Capricorn" : "Sagittarius"
+  return ""
+}
+
+function formatBirthdayAndZodiac(dobIso) {
+  const raw = String(dobIso || "").trim()
+  if (!raw) return ""
+  const dt = new Date(raw + "T00:00:00")
+  if (Number.isNaN(dt.getTime())) return ""
+  const month = dt.getMonth() + 1
+  const day = dt.getDate()
+  const label = dt.toLocaleString(undefined, { month: "long", day: "numeric" })
+  const zodiac = zodiacFor(month, day)
+  return zodiac ? `${label} • ${zodiac}` : label
+}
+
+function computeSizeFit(measurements) {
+  const chest = Number(measurements?.chestCm)
+  const waist = Number(measurements?.waistCm)
+  const hip = Number(measurements?.hipCm)
+  if (!Number.isFinite(chest) || !Number.isFinite(waist) || !Number.isFinite(hip)) return ""
+
+  let size = "M"
+  if (chest < 84) size = "XS"
+  else if (chest < 92) size = "S"
+  else if (chest < 100) size = "M"
+  else if (chest < 108) size = "L"
+  else if (chest < 116) size = "XL"
+  else if (chest < 124) size = "XXL"
+  else size = "XXXL"
+
+  const ratio = waist / chest
+  let fit = "Regular"
+  if (ratio < 0.8) fit = "Athletic"
+  else if (ratio > 0.92) fit = "Relaxed"
+
+  return `Estimated: ${size} • Fit: ${fit}`
+}
+
 function maskDigits(text) {
   return String(text || "").replace(/\d/g, "•")
 }
@@ -261,6 +343,9 @@ function loadProfile() {
       avatarDataUrl: String(stored.avatarDataUrl || ""),
       fullName: String(stored.fullName || stored.name || "App User"),
       email: String(stored.email || ""),
+      username: String(stored.username || generateUsername(stored.fullName || stored.name || "App User", stored.email || "")),
+      dob: String(stored.dob || ""),
+      measurements: stored.measurements && typeof stored.measurements === "object" ? stored.measurements : {},
       country: String(stored.country || ""),
       state: String(stored.state || ""),
       city: String(stored.city || ""),
@@ -281,6 +366,9 @@ function loadProfile() {
     avatarDataUrl: "",
     fullName: String(match?.appUserProfile?.fullName || match?.name || "App User"),
     email: email || String(match?.email || ""),
+    username: String(match?.appUserProfile?.username || generateUsername(match?.appUserProfile?.fullName || match?.name || "App User", email || String(match?.email || ""))),
+    dob: String(match?.appUserProfile?.dob || ""),
+    measurements: match?.appUserProfile?.measurements && typeof match?.appUserProfile?.measurements === "object" ? match?.appUserProfile?.measurements : {},
     country: String(match?.contactProfile?.country || ""),
     state: String(match?.contactProfile?.state || ""),
     city: String(match?.contactProfile?.city || ""),
@@ -509,9 +597,9 @@ function setPhoneDialPlaceholder(phoneInput, countryName) {
 function hydrateProfileUI(profile) {
   const welcomeNameEl = document.getElementById("welcome-name")
   const nameEl = document.getElementById("profile-name")
-  const emailEl = document.getElementById("profile-email")
-  const locationEl = document.getElementById("profile-location")
-  const phoneEl = document.getElementById("profile-phone")
+  const usernameEl = document.getElementById("profile-username")
+  const sizeFitEl = document.getElementById("profile-size-fit")
+  const birthdayEl = document.getElementById("profile-birthday")
   const avatarEl = document.getElementById("profile-avatar")
   const topbarNameEl = document.getElementById("topbar-name")
   const topbarAvatarEl = document.getElementById("topbar-avatar")
@@ -522,12 +610,15 @@ function hydrateProfileUI(profile) {
   const displayName = profile.fullName || "—"
   if (welcomeNameEl) welcomeNameEl.textContent = `${displayName} 👋`
   if (nameEl) nameEl.textContent = displayName
-  if (emailEl) emailEl.textContent = profile.email || "—"
-  if (locationEl) {
-    const parts = [profile.city, profile.state, profile.country].filter(Boolean)
-    locationEl.textContent = parts.length ? parts.join(", ") : "—"
+  if (usernameEl) usernameEl.textContent = profile.username ? `@${profile.username}` : "—"
+  if (sizeFitEl) {
+    const computed = computeSizeFit(profile.measurements)
+    sizeFitEl.textContent = computed || "Add measurements to detect size & fit"
   }
-  if (phoneEl) phoneEl.textContent = profile.phone || "—"
+  if (birthdayEl) {
+    const label = formatBirthdayAndZodiac(profile.dob)
+    birthdayEl.textContent = label || "Add date of birth"
+  }
 
   if (avatarEl) {
     const url = String(profile.avatarDataUrl || "")
@@ -582,6 +673,40 @@ function wireBalanceToggle(profile) {
   btn.addEventListener("click", () => {
     setBalanceVisible(!getBalanceVisible())
     render()
+  })
+}
+
+function wireMeasurements(profile) {
+  const form = document.getElementById("measurements-form")
+  if (!form) return
+
+  const heightEl = document.getElementById("mHeight")
+  const chestEl = document.getElementById("mChest")
+  const waistEl = document.getElementById("mWaist")
+  const hipEl = document.getElementById("mHip")
+
+  function fill() {
+    const m = profile.measurements || {}
+    if (heightEl && Number.isFinite(Number(m.heightCm))) heightEl.value = String(m.heightCm)
+    if (chestEl && Number.isFinite(Number(m.chestCm))) chestEl.value = String(m.chestCm)
+    if (waistEl && Number.isFinite(Number(m.waistCm))) waistEl.value = String(m.waistCm)
+    if (hipEl && Number.isFinite(Number(m.hipCm))) hipEl.value = String(m.hipCm)
+  }
+
+  fill()
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const next = {
+      heightCm: Number(heightEl?.value || ""),
+      chestCm: Number(chestEl?.value || ""),
+      waistCm: Number(waistEl?.value || ""),
+      hipCm: Number(hipEl?.value || ""),
+    }
+    profile.measurements = next
+    saveProfile(profile)
+    hydrateProfileUI(profile)
+    renderHistoryTimeline(loadHistory(), "history-panel-timeline")
   })
 }
 
@@ -701,15 +826,16 @@ function wireProfileDialog(profile) {
   const form = document.getElementById("profile-form")
 
   const fullNameEl = document.getElementById("profileFullName")
+  const usernameEl = document.getElementById("profileUsername")
   const avatarFileEl = document.getElementById("profileAvatar")
   const emailEl = document.getElementById("profileEmail")
   const countryEl = document.getElementById("profileCountry")
-  const phoneEl = document.getElementById("profilePhone")
   const stateEl = document.getElementById("profileState")
   const stateList = document.getElementById("profile-state-list")
   const cityEl = document.getElementById("profileCity")
   const cityList = document.getElementById("profile-city-list")
   const postalEl = document.getElementById("profilePostalCode")
+  const dobEl = document.getElementById("profileDob")
   const tierEl = document.getElementById("profileTier")
   const balanceEl = document.getElementById("profileBalance")
 
@@ -721,7 +847,6 @@ function wireProfileDialog(profile) {
     const c = String(countryEl?.value || "").trim()
     setStateDatalist(stateList, c)
     setCityDatalist(cityList, c)
-    setPhoneDialPlaceholder(phoneEl, c)
   }
 
   if (countryEl) countryEl.addEventListener("change", syncStateForCountry)
@@ -743,11 +868,12 @@ function wireProfileDialog(profile) {
   function fillForm() {
     if (fullNameEl) fullNameEl.value = profile.fullName || ""
     if (emailEl) emailEl.value = profile.email || ""
+    if (usernameEl) usernameEl.value = profile.username ? `@${profile.username}` : ""
     if (countryEl) countryEl.value = profile.country || ""
-    if (phoneEl) phoneEl.value = profile.phone || ""
     if (stateEl) stateEl.value = profile.state || ""
     if (cityEl) cityEl.value = profile.city || ""
     if (postalEl) postalEl.value = profile.postalCode || ""
+    if (dobEl) dobEl.value = profile.dob || ""
     if (tierEl) tierEl.value = profile.membershipTier || "Basic"
     if (balanceEl) balanceEl.value = profile.balanceOrCredits || "Credits left: 12"
     if (avatarFileEl) avatarFileEl.value = ""
@@ -772,25 +898,28 @@ function wireProfileDialog(profile) {
     const next = {
       fullName: String(fullNameEl?.value || "").trim(),
       email: String(emailEl?.value || "").trim().toLowerCase(),
+      username: generateUsername(String(fullNameEl?.value || "").trim(), String(emailEl?.value || "").trim().toLowerCase()),
       country: String(countryEl?.value || "").trim(),
-      phone: String(phoneEl?.value || "").trim(),
       state: String(stateEl?.value || "").trim(),
       city: String(cityEl?.value || "").trim(),
       postalCode: String(postalEl?.value || "").trim(),
+      dob: String(dobEl?.value || "").trim(),
       membershipTier: String(tierEl?.value || "Basic").trim(),
       balanceOrCredits: String(balanceEl?.value || "").trim(),
       avatarDataUrl: String(pendingAvatarDataUrl || profile.avatarDataUrl || ""),
+      measurements: profile.measurements || {},
     }
 
     saveProfile(next)
     localStorage.setItem(SESSION_EMAIL_KEY, next.email)
     profile.fullName = next.fullName
     profile.email = next.email
+    profile.username = next.username
     profile.country = next.country
-    profile.phone = next.phone
     profile.state = next.state
     profile.city = next.city
     profile.postalCode = next.postalCode
+    profile.dob = next.dob
     profile.membershipTier = next.membershipTier
     profile.balanceOrCredits = next.balanceOrCredits
     profile.avatarDataUrl = next.avatarDataUrl
@@ -918,15 +1047,10 @@ seedDemoDataIfEmpty()
 seedNotificationsIfEmpty()
 
 const profile = loadProfile()
-const prefs = loadPreferences()
-const history = loadHistory()
 
 hydrateProfileUI(profile)
-hydratePreferencesUI(prefs)
-renderHistory(history)
 
 wireProfileDialog(profile)
 wireUpgradeDialog(profile)
-wirePreferences(prefs)
-wireHistory(history)
 wireBalanceToggle(profile)
+wireMeasurements(profile)
