@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StitchSync | B2B Virtual Fitting</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">STITCH<span>SYNC</span></div>
+        <div class="nav-links">
+            <button id="manufacturer-view">Manufacturer Portal</button>
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <aside class="sidebar vault">
+            <h3>Bio-Data Vault</h3>
+            <p>Input measurements for custom tailoring.</p>
+            <form id="measurement-form">
+                <div class="input-group">
+                    <label>Neck (cm)</label>
+                    <input type="number" id="neck" placeholder="38">
+                </div>
+                <div class="input-group">
+                    <label>Chest (cm)</label>
+                    <input type="number" id="chest" placeholder="100">
+                </div>
+                <div class="input-group">
+                    <label>Waist (cm)</label>
+                    <input type="number" id="waist" placeholder="85">
+                </div>
+                <button type="submit" class="btn-primary">Update Vault</button>
+            </form>
+        </aside>
+
+        <section class="mirror-section">
+            <div class="canvas-container">
+                <canvas id="virtual-mirror"></canvas>
+                <div class="controls">
+                    <input type="file" id="user-upload" hidden>
+                    <button onclick="document.getElementById('user-upload').click()">Upload Photo</button>
+                </div>
+            </div>
+        </section>
+
+        <aside class="sidebar catalog">
+            <h3>Brand Catalog</h3>
+            <div class="garment-list">
+                <div class="item" onclick="tryOn('shirt')">
+                    <img src="https://via.placeholder.com/80x100?text=Shirt" alt="Shirt">
+                    <span>Oxford Slim Fit</span>
+                </div>
+                <div class="item" onclick="tryOn('jacket')">
+                    <img src="https://via.placeholder.com/80x100?text=Jacket" alt="Jacket">
+                    <span>Classic Blazer</span>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
