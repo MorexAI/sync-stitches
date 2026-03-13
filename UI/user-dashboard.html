@@ -145,13 +145,6 @@
           </div>
         </article>
 
-        <article class="card" id="notifications" aria-label="Notifications">
-          <div class="card-head">
-            <h2 class="card-title marcellus-regular">Notifications</h2>
-          </div>
-          <div class="notifications" id="notifications-list"></div>
-        </article>
-
         <article class="card card--wide" id="history" aria-label="Fit check history">
           <div class="card-head">
             <h2 class="card-title marcellus-regular">Recent Fit Checks</h2>
@@ -266,6 +259,36 @@
           </button>
         </div>
         <div class="upgrade-hint marcellus-regular">Prototype: selecting a tier updates your profile.</div>
+      </div>
+      <div class="dialog-actions">
+        <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="notifications-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div class="dialog-title marcellus-regular">Notifications</div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="notifications" id="notifications-list"></div>
+      </div>
+      <div class="dialog-actions">
+        <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="history-dialog">
+    <form method="dialog" class="dialog-card">
+      <div class="dialog-head">
+        <div class="dialog-title marcellus-regular">History</div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="dialog-body">
+        <div class="history-timeline" id="history-timeline"></div>
       </div>
       <div class="dialog-actions">
         <button class="pill-btn pill-btn--primary" value="cancel">Done</button>

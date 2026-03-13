@@ -405,6 +405,53 @@ function filterHistory(allItems, { query, rangeDays }) {
   })
 }
 
+function monthLabel(ts) {
+  const d = new Date(ts)
+  return d.toLocaleString(undefined, { month: "long", year: "numeric" })
+}
+
+function renderHistoryTimeline(items) {
+  const wrap = document.getElementById("history-timeline")
+  if (!wrap) return
+  wrap.innerHTML = ""
+
+  const data = (items || []).slice().sort((a, b) => Number(b.checkedAt) - Number(a.checkedAt))
+  if (data.length === 0) {
+    const el = document.createElement("div")
+    el.className = "timeline-item"
+    el.innerHTML = `<div class="timeline-dot"></div><div class="timeline-card"><div class="timeline-title">No records yet</div><div class="timeline-meta">${formatDateTime(Date.now())}</div></div>`
+    wrap.appendChild(el)
+    return
+  }
+
+  let currentMonth = ""
+  data.forEach((item) => {
+    const label = monthLabel(item.checkedAt)
+    if (label !== currentMonth) {
+      currentMonth = label
+      const m = document.createElement("div")
+      m.className = "timeline-month marcellus-regular"
+      m.textContent = currentMonth
+      wrap.appendChild(m)
+    }
+    const el = document.createElement("div")
+    el.className = "timeline-item"
+    el.innerHTML = `
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-row">
+          <div class="timeline-title">${String(item.companyName || "—")}</div>
+          <span class="${getStatusClass(item.result)}">${String(item.result || "—")}</span>
+        </div>
+        <div class="timeline-row">
+          <div>${String(item.garmentName || "—")}</div>
+          <div class="timeline-meta">${formatDateTime(item.checkedAt)}</div>
+        </div>
+      </div>
+    `
+    wrap.appendChild(el)
+  })
+}
 function populateCountrySelect(selectEl) {
   if (!selectEl) return
   if (selectEl.options.length > 1) return
@@ -586,6 +633,8 @@ function wireSidebar() {
   const sidebar = document.getElementById("sidebar")
   const backdrop = document.getElementById("sidebar-backdrop")
   const logoutBtn = document.getElementById("sidebar-logout")
+  const notificationsDialog = document.getElementById("notifications-dialog")
+  const historyDialog = document.getElementById("history-dialog")
 
   function open() {
     document.body.classList.add("sidebar-open")
@@ -605,6 +654,21 @@ function wireSidebar() {
     sidebar.addEventListener("click", (e) => {
       const a = e.target?.closest?.("a[data-nav]")
       if (!a) return
+      const nav = String(a.getAttribute("data-nav") || "").trim()
+      if (nav === "notifications") {
+        e.preventDefault()
+        renderNotifications(loadNotifications())
+        if (notificationsDialog && typeof notificationsDialog.showModal === "function") notificationsDialog.showModal()
+        close()
+        return
+      }
+      if (nav === "history") {
+        e.preventDefault()
+        renderHistoryTimeline(loadHistory())
+        if (historyDialog && typeof historyDialog.showModal === "function") historyDialog.showModal()
+        close()
+        return
+      }
       close()
     })
   }
@@ -845,12 +909,10 @@ seedNotificationsIfEmpty()
 const profile = loadProfile()
 const prefs = loadPreferences()
 const history = loadHistory()
-const notifications = loadNotifications()
 
 hydrateProfileUI(profile)
 hydratePreferencesUI(prefs)
 renderHistory(history)
-renderNotifications(notifications)
 
 wireProfileDialog(profile)
 wireUpgradeDialog(profile)
