@@ -1,11 +1,9 @@
 
-/* For mobile phones: */
 [class*="col-"] {
   width: 100%;
 }
 
 @media only screen and (min-width: 600px) {
-  /* For tablets: */
   .col-s-1 {width: 8.33%;}
   .col-s-2 {width: 16.66%;}
   .col-s-3 {width: 25%;}
@@ -21,7 +19,6 @@
 }
 
 @media only screen and (min-width: 768px) {
-  /* For desktop: */
   .col-1 {width: 8.33%;}
   .col-2 {width: 16.66%;}
   .col-3 {width: 25%;}
@@ -39,24 +36,23 @@
 @media screen and (max-width: 768px) {
   .hero-section {
     flex-direction: column;
-    height: auto; /* Adjust height for stacked content */
+    height: auto;
     margin-top: 4rem;
     margin-bottom: 5rem;
   }
 
   .hero-text {
-    /* Reset alignment for stacked layout if needed */
     align-items: center;
   }
 
   .hero-title {
-    font-size: 2.5rem; /* Adjust font size for smaller screens */
+    font-size: 2.5rem;
   }
 
   .hero-video {
-    width: 100%; /* Make video take full width */
+    width: 100%;
     height: auto;
-    max-height: 50vh; /* Limit video height */
-    object-fit: cover; /* Cover the area, might crop */
+    max-height: 50vh;
+    object-fit: cover;
   }
 }
