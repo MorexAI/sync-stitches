@@ -274,6 +274,21 @@ body.sidebar-open .sidebar{
   font-weight:700;
 }
 
+.sidebar-link__left{
+  display:inline-flex;
+  align-items:center;
+  gap:0.7rem;
+}
+
+.sidebar-icon{
+  width:22px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  line-height:1;
+}
+
 .sidebar-link:hover{
   border-color:var(--accent);
 }
@@ -471,6 +486,29 @@ body.sidebar-open .sidebar{
   color:var(--muted);
 }
 
+.billing-balance{
+  display:inline-flex;
+  align-items:center;
+  gap:0.6rem;
+}
+
+.billing-value{
+  font-weight:800;
+  letter-spacing:0.2px;
+}
+
+.billing-value--balance{
+  font-size:1.25rem;
+  font-family:var(--font-heading);
+}
+
+.icon-btn--sm{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:18px;
+}
+
 .history-controls{
   display:flex;
   gap:0.7rem;
@@ -649,6 +687,38 @@ body.sidebar-open .sidebar{
   margin-top:0.85rem;
   color:var(--muted);
   text-align:center;
+}
+
+@media (max-width: 480px){
+  .topbar{
+    padding:1rem 4%;
+  }
+
+  .topbar-actions{
+    gap:0.5rem;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+
+  .role-badge{
+    display:none;
+  }
+
+  .profile-btn__name{
+    display:none;
+  }
+
+  .shell{
+    padding:1.25rem 4% 2.5rem;
+  }
+
+  .hero-title{
+    font-size:2.05rem;
+  }
+
+  .card{
+    padding:1rem 0.95rem 1.05rem;
+  }
 }
 
 @media (max-width: 768px){

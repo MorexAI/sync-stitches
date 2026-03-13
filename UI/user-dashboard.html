@@ -34,10 +34,18 @@
         <button class="icon-btn sidebar-close" id="menu-close-btn" type="button" aria-label="Close menu">×</button>
       </div>
       <nav class="sidebar-nav">
-        <a class="sidebar-link marcellus-regular" href="#settings" data-nav="settings">Settings</a>
-        <a class="sidebar-link marcellus-regular" href="#notifications" data-nav="notifications">Notifications</a>
-        <a class="sidebar-link marcellus-regular" href="#history" data-nav="history">History</a>
-        <button class="sidebar-link sidebar-link--danger marcellus-regular" id="sidebar-logout" type="button">Log out</button>
+        <a class="sidebar-link marcellus-regular" href="#settings" data-nav="settings">
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">⚙️</span>Settings</span>
+        </a>
+        <a class="sidebar-link marcellus-regular" href="#notifications" data-nav="notifications">
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🔔</span>Notifications</span>
+        </a>
+        <a class="sidebar-link marcellus-regular" href="#history" data-nav="history">
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🕘</span>History</span>
+        </a>
+        <button class="sidebar-link sidebar-link--danger marcellus-regular" id="sidebar-logout" type="button">
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🚪</span>Log out</span>
+        </button>
       </nav>
     </aside>
 
@@ -127,9 +135,12 @@
               <div class="billing-label marcellus-regular">Renewal</div>
               <div class="billing-value" id="membership-renewal">—</div>
             </div>
-            <div class="billing-row">
+            <div class="billing-row billing-row--balance">
               <div class="billing-label marcellus-regular">Balance / Credits</div>
-              <div class="billing-value" id="membership-balance">—</div>
+              <div class="billing-balance">
+                <div class="billing-value billing-value--balance" id="membership-balance">—</div>
+                <button class="icon-btn icon-btn--sm" id="balance-toggle" type="button" aria-label="Show balance" aria-pressed="false">👁</button>
+              </div>
             </div>
           </div>
         </article>

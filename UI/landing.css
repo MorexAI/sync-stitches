@@ -13,12 +13,19 @@
 }
 .marcellus-regular { font-family: "Marcellus", serif; font-weight: 400; font-style: normal; } .great-vibes-regular { font-family: "Great Vibes", cursive; font-weight: 400; font-style: normal; }
 
+*,
+*::before,
+*::after{
+box-sizing:border-box;
+}
+
 body{
 font-family:'Helvetica Neue', Arial, sans-serif;
 background:var(--bg-color);
 color:var(--text-color);
 margin:0;
 transition:0.4s;
+overflow-x:hidden;
 }
 
 .navbar{
@@ -182,13 +189,15 @@ font-weight:600;
 
 .hero-section{
 position:relative;
-height:80vh;
+height:min(80vh, 720px);
 overflow:hidden;
 display:flex;
 gap:3rem;
 justify-content:center;
-margin-top:7rem;
-margin-bottom: 10rem;
+align-items:center;
+padding:0 5%;
+margin-top:5rem;
+margin-bottom:6rem;
 
 }
 
@@ -207,6 +216,9 @@ margin-bottom:1rem;
 
 .hero-video{
 object-fit:contain;
+width:min(48vw, 560px);
+max-height:70vh;
+display:block;
 }
 
 header.tbh{
@@ -220,8 +232,8 @@ text-align: center;
 width:100%;
 overflow:hidden;
 padding:2rem 0;
-background:#ffffff;
-margin-bottom: 30rem;
+background:var(--bg-color);
+margin-bottom: 12rem;
 }
 
 .scroll-track{

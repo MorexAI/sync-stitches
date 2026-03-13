@@ -3,6 +3,23 @@
   width: 100%;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
 @media only screen and (min-width: 600px) {
   .col-s-1 {width: 8.33%;}
   .col-s-2 {width: 16.66%;}
@@ -34,11 +51,23 @@
 }
 
 @media screen and (max-width: 768px) {
+  .navbar {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
   .hero-section {
     flex-direction: column;
     height: auto;
-    margin-top: 4rem;
-    margin-bottom: 5rem;
+    margin-top: 2.75rem;
+    margin-bottom: 4rem;
+    gap: 1.5rem;
+    padding: 0 5%;
   }
 
   .hero-text {
@@ -46,13 +75,59 @@
   }
 
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
   }
 
   .hero-video {
     width: 100%;
     height: auto;
-    max-height: 50vh;
-    object-fit: cover;
+    max-height: 42vh;
+    object-fit: contain;
+  }
+
+  .scroll-section {
+    background: var(--bg-color);
+    margin-bottom: 6rem;
+    padding: 1.25rem 0;
+  }
+
+  .scroll-track {
+    gap: 24px;
+  }
+
+  .scroll-track-container {
+    gap: 36px;
+  }
+
+  .scroll-img {
+    width: 180px;
+    height: 120px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .navbar {
+    padding: 1rem 5%;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-video {
+    max-height: 38vh;
+  }
+
+  header.tbh {
+    font-size: 1.5rem;
+  }
+
+  .scroll-img {
+    width: 150px;
+    height: 100px;
   }
 }

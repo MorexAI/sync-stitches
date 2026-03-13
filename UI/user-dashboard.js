@@ -8,6 +8,7 @@ const PREFS_KEY = "stitchSync_appUserPreferences"
 const HISTORY_KEY = "stitchSync_fitHistory"
 const ACCOUNTS_KEY = "stitchSync_accounts"
 const NOTIFICATIONS_KEY = "stitchSync_notifications"
+const BALANCE_VISIBILITY_KEY = "stitchSync_balanceVisible"
 
 const countryOptions = [
   { name: "Afghanistan", dial: "+93" },
@@ -217,6 +218,20 @@ function getInitials(name) {
   const last = parts.length > 1 ? parts[parts.length - 1]?.[0] || "" : ""
   const initials = (first + last).toUpperCase()
   return initials || "U"
+}
+
+function maskDigits(text) {
+  return String(text || "").replace(/\d/g, "•")
+}
+
+function getBalanceVisible() {
+  const raw = localStorage.getItem(BALANCE_VISIBILITY_KEY)
+  if (raw === null) return false
+  return raw === "true"
+}
+
+function setBalanceVisible(next) {
+  localStorage.setItem(BALANCE_VISIBILITY_KEY, next ? "true" : "false")
 }
 
 function ensureSignedIn() {
@@ -464,7 +479,32 @@ function hydrateProfileUI(profile) {
     const dt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30)
     renewalEl.textContent = dt.toLocaleDateString()
   }
-  if (balanceEl) balanceEl.textContent = profile.balanceOrCredits || "—"
+  if (balanceEl) {
+    const visible = getBalanceVisible()
+    const raw = profile.balanceOrCredits || "—"
+    balanceEl.textContent = visible ? raw : maskDigits(raw)
+  }
+}
+
+function wireBalanceToggle(profile) {
+  const btn = document.getElementById("balance-toggle")
+  const balanceEl = document.getElementById("membership-balance")
+  if (!btn || !balanceEl) return
+
+  function render() {
+    const visible = getBalanceVisible()
+    const raw = profile.balanceOrCredits || "—"
+    balanceEl.textContent = visible ? raw : maskDigits(raw)
+    btn.textContent = visible ? "🙈" : "👁"
+    btn.setAttribute("aria-pressed", visible ? "true" : "false")
+    btn.setAttribute("aria-label", visible ? "Hide balance" : "Show balance")
+  }
+
+  render()
+  btn.addEventListener("click", () => {
+    setBalanceVisible(!getBalanceVisible())
+    render()
+  })
 }
 
 function hydratePreferencesUI(prefs) {
@@ -644,6 +684,7 @@ function wireProfileDialog(profile) {
     profile.avatarDataUrl = next.avatarDataUrl
 
     hydrateProfileUI(profile)
+    wireBalanceToggle(profile)
     if (dialog) dialog.close()
   })
 }
@@ -778,3 +819,4 @@ wireProfileDialog(profile)
 wireUpgradeDialog(profile)
 wirePreferences(prefs)
 wireHistory(history)
+wireBalanceToggle(profile)

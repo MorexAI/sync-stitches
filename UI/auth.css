@@ -212,6 +212,20 @@ body{
 .auth-error.is-visible{ display:block; }
 
 @media (max-width: 480px){
+  .auth-nav{
+    flex-wrap:wrap;
+    gap:0.75rem;
+  }
+
+  .auth-actions{
+    width:100%;
+    justify-content:flex-end;
+  }
+
+  .auth-shell{
+    padding:1.75rem 5% 2.5rem;
+  }
+
   .auth-card{ padding:1.25rem 1.05rem 1.15rem; }
   .auth-title{ font-size:1.85rem; }
 }
