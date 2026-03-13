@@ -191,6 +191,18 @@ const statesByCountry = {
   ],
 }
 
+const citiesByCountry = {
+  Australia: ["Adelaide", "Brisbane", "Canberra", "Darwin", "Gold Coast", "Hobart", "Melbourne", "Perth", "Sydney"],
+  Canada: ["Calgary", "Edmonton", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Winnipeg"],
+  Germany: ["Berlin", "Bonn", "Cologne", "Dortmund", "Dresden", "Dusseldorf", "Frankfurt", "Hamburg", "Leipzig", "Munich", "Stuttgart"],
+  India: ["Ahmedabad", "Bengaluru", "Chennai", "Delhi", "Hyderabad", "Jaipur", "Kolkata", "Lucknow", "Mumbai", "Pune"],
+  Nigeria: ["Abuja", "Benin City", "Ibadan", "Ilorin", "Kaduna", "Kano", "Lagos", "Onitsha", "Port Harcourt"],
+  "South Africa": ["Bloemfontein", "Cape Town", "Durban", "Johannesburg", "Pretoria", "Port Elizabeth"],
+  "United Arab Emirates": ["Abu Dhabi", "Ajman", "Dubai", "Fujairah", "Ras Al Khaimah", "Sharjah"],
+  "United Kingdom": ["Birmingham", "Bristol", "Edinburgh", "Glasgow", "Leeds", "Liverpool", "London", "Manchester", "Newcastle"],
+  "United States": ["Atlanta", "Austin", "Boston", "Chicago", "Dallas", "Denver", "Houston", "Los Angeles", "Miami", "New York", "Seattle"],
+}
+
 function readJson(key, fallback) {
   const raw = localStorage.getItem(key)
   if (!raw) return fallback
@@ -251,6 +263,7 @@ function loadProfile() {
       email: String(stored.email || ""),
       country: String(stored.country || ""),
       state: String(stored.state || ""),
+      city: String(stored.city || ""),
       phone: String(stored.phone || ""),
       postalCode: String(stored.postalCode || ""),
       membershipTier: String(stored.membershipTier || "Basic"),
@@ -270,6 +283,7 @@ function loadProfile() {
     email: email || String(match?.email || ""),
     country: String(match?.contactProfile?.country || ""),
     state: String(match?.contactProfile?.state || ""),
+    city: String(match?.contactProfile?.city || ""),
     phone: String(match?.contactProfile?.phone || ""),
     postalCode: String(match?.contactProfile?.postalCode || ""),
     membershipTier: "Basic",
@@ -415,6 +429,18 @@ function setStateDatalist(listEl, countryName) {
   })
 }
 
+function setCityDatalist(listEl, countryName) {
+  if (!listEl) return
+  listEl.innerHTML = ""
+  const cities = citiesByCountry[countryName]
+  if (!cities) return
+  cities.forEach((c) => {
+    const opt = document.createElement("option")
+    opt.value = c
+    listEl.appendChild(opt)
+  })
+}
+
 function setPhoneDialPlaceholder(phoneInput, countryName) {
   if (!phoneInput) return
   const match = countryOptions.find((c) => c.name === countryName)
@@ -451,7 +477,7 @@ function hydrateProfileUI(profile) {
   if (nameEl) nameEl.textContent = displayName
   if (emailEl) emailEl.textContent = profile.email || "—"
   if (locationEl) {
-    const parts = [profile.state, profile.country].filter(Boolean)
+    const parts = [profile.city, profile.state, profile.country].filter(Boolean)
     locationEl.textContent = parts.length ? parts.join(", ") : "—"
   }
   if (phoneEl) phoneEl.textContent = profile.phone || "—"
@@ -606,6 +632,8 @@ function wireProfileDialog(profile) {
   const phoneEl = document.getElementById("profilePhone")
   const stateEl = document.getElementById("profileState")
   const stateList = document.getElementById("profile-state-list")
+  const cityEl = document.getElementById("profileCity")
+  const cityList = document.getElementById("profile-city-list")
   const postalEl = document.getElementById("profilePostalCode")
   const tierEl = document.getElementById("profileTier")
   const balanceEl = document.getElementById("profileBalance")
@@ -617,6 +645,7 @@ function wireProfileDialog(profile) {
   function syncStateForCountry() {
     const c = String(countryEl?.value || "").trim()
     setStateDatalist(stateList, c)
+    setCityDatalist(cityList, c)
     setPhoneDialPlaceholder(phoneEl, c)
   }
 
@@ -642,6 +671,7 @@ function wireProfileDialog(profile) {
     if (countryEl) countryEl.value = profile.country || ""
     if (phoneEl) phoneEl.value = profile.phone || ""
     if (stateEl) stateEl.value = profile.state || ""
+    if (cityEl) cityEl.value = profile.city || ""
     if (postalEl) postalEl.value = profile.postalCode || ""
     if (tierEl) tierEl.value = profile.membershipTier || "Basic"
     if (balanceEl) balanceEl.value = profile.balanceOrCredits || "Credits left: 12"
@@ -670,6 +700,7 @@ function wireProfileDialog(profile) {
       country: String(countryEl?.value || "").trim(),
       phone: String(phoneEl?.value || "").trim(),
       state: String(stateEl?.value || "").trim(),
+      city: String(cityEl?.value || "").trim(),
       postalCode: String(postalEl?.value || "").trim(),
       membershipTier: String(tierEl?.value || "Basic").trim(),
       balanceOrCredits: String(balanceEl?.value || "").trim(),
@@ -683,6 +714,7 @@ function wireProfileDialog(profile) {
     profile.country = next.country
     profile.phone = next.phone
     profile.state = next.state
+    profile.city = next.city
     profile.postalCode = next.postalCode
     profile.membershipTier = next.membershipTier
     profile.balanceOrCredits = next.balanceOrCredits

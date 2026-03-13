@@ -438,6 +438,18 @@ const statesByCountry = {
   ],
 }
 
+const citiesByCountry = {
+  Australia: ["Adelaide", "Brisbane", "Canberra", "Darwin", "Gold Coast", "Hobart", "Melbourne", "Perth", "Sydney"],
+  Canada: ["Calgary", "Edmonton", "Halifax", "Montreal", "Ottawa", "Quebec City", "Toronto", "Vancouver", "Winnipeg"],
+  Germany: ["Berlin", "Bonn", "Cologne", "Dortmund", "Dresden", "Dusseldorf", "Frankfurt", "Hamburg", "Leipzig", "Munich", "Stuttgart"],
+  India: ["Ahmedabad", "Bengaluru", "Chennai", "Delhi", "Hyderabad", "Jaipur", "Kolkata", "Lucknow", "Mumbai", "Pune"],
+  Nigeria: ["Abuja", "Benin City", "Ibadan", "Ilorin", "Kaduna", "Kano", "Lagos", "Onitsha", "Port Harcourt"],
+  "South Africa": ["Bloemfontein", "Cape Town", "Durban", "Johannesburg", "Pretoria", "Port Elizabeth"],
+  "United Arab Emirates": ["Abu Dhabi", "Ajman", "Dubai", "Fujairah", "Ras Al Khaimah", "Sharjah"],
+  "United Kingdom": ["Birmingham", "Bristol", "Edinburgh", "Glasgow", "Leeds", "Liverpool", "London", "Manchester", "Newcastle"],
+  "United States": ["Atlanta", "Austin", "Boston", "Chicago", "Dallas", "Denver", "Houston", "Los Angeles", "Miami", "New York", "Seattle"],
+}
+
 function wireSignup() {
   const form = document.getElementById("signup-form")
   if (!form) return
@@ -454,6 +466,8 @@ function wireSignup() {
   const phoneInput = document.getElementById("phone")
   const stateInput = document.getElementById("state")
   const stateList = document.getElementById("state-list")
+  const cityInput = document.getElementById("city")
+  const cityList = document.getElementById("city-list")
   const postalCodeInput = document.getElementById("postalCode")
   const postalList = document.getElementById("postal-list")
 
@@ -494,6 +508,7 @@ function wireSignup() {
     shouldRequire(phoneCodeSelect)
     shouldRequire(phoneInput)
     shouldRequire(stateInput)
+    shouldRequire(cityInput)
     shouldRequire(postalCodeInput)
   }
 
@@ -522,6 +537,18 @@ function wireSignup() {
     if (phoneInput && !String(phoneInput.placeholder || "")) {
       phoneInput.placeholder = "Phone number"
     }
+  }
+
+  function setCitySuggestions(countryName) {
+    if (!cityList) return
+    cityList.innerHTML = ""
+    const options = citiesByCountry[countryName]
+    if (!options || options.length === 0) return
+    options.forEach((name) => {
+      const opt = document.createElement("option")
+      opt.value = name
+      cityList.appendChild(opt)
+    })
   }
 
   function setPostalSuggestions(countryName) {
@@ -582,9 +609,11 @@ function wireSignup() {
   function handleCountryChange() {
     const countryName = String(countryInput?.value || "").trim()
     setStateSuggestions(countryName)
+    setCitySuggestions(countryName)
     setPhoneDialCode(countryName)
     setPostalSuggestions(countryName)
     if (stateInput) stateInput.placeholder = statesByCountry[countryName] ? "Select or type..." : "Start typing..."
+    if (cityInput) cityInput.placeholder = citiesByCountry[countryName] ? "Select or type..." : "Start typing..."
   }
 
   populateCountries()
@@ -621,6 +650,7 @@ function wireSignup() {
       country: countryName,
       phone: phoneCombined,
       state: String(stateInput?.value || "").trim(),
+      city: String(cityInput?.value || "").trim(),
       postalCode: String(postalCodeInput?.value || "").trim(),
     }
 
@@ -628,6 +658,7 @@ function wireSignup() {
     if (!phoneNumber) return showError("Please enter your phone number.")
     if (expectedDial && !phoneCode) return showError("Please select your phone code.")
     if (!contactProfile.state) return showError("Please enter your state.")
+    if (!contactProfile.city) return showError("Please enter your city.")
     if (!contactProfile.postalCode) return showError("Please enter your postal code.")
 
     const manufacturerProfile = role === "manufacturer" ? { businessName: name } : null
