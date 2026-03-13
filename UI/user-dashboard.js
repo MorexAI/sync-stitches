@@ -349,7 +349,12 @@ function renderHistory(items) {
   if (!items || items.length === 0) {
     const empty = document.createElement("div")
     empty.className = "table-row"
-    empty.innerHTML = `<div>${formatDateTime(Date.now())}</div><div>—</div><div>No records yet</div><div><span class="status">—</span></div>`
+    empty.innerHTML = `
+      <div class="table-cell" data-label="Date">${formatDateTime(Date.now())}</div>
+      <div class="table-cell" data-label="Company">—</div>
+      <div class="table-cell" data-label="Garment">No records yet</div>
+      <div class="table-cell" data-label="Result"><span class="status">—</span></div>
+    `
     list.appendChild(empty)
     return
   }
@@ -361,10 +366,10 @@ function renderHistory(items) {
       const row = document.createElement("div")
       row.className = "table-row"
       row.innerHTML = `
-        <div>${formatDateTime(item.checkedAt)}</div>
-        <div>${String(item.companyName || "—")}</div>
-        <div>${String(item.garmentName || "—")}</div>
-        <div><span class="${getStatusClass(item.result)}">${String(item.result || "—")}</span></div>
+        <div class="table-cell" data-label="Date">${formatDateTime(item.checkedAt)}</div>
+        <div class="table-cell" data-label="Company">${String(item.companyName || "—")}</div>
+        <div class="table-cell" data-label="Garment">${String(item.garmentName || "—")}</div>
+        <div class="table-cell" data-label="Result"><span class="${getStatusClass(item.result)}">${String(item.result || "—")}</span></div>
       `
       list.appendChild(row)
     })

@@ -67,6 +67,18 @@ body{
   gap:0.7rem;
 }
 
+@media (max-width: 420px){
+  .topbar{
+    flex-wrap:wrap;
+    gap:0.75rem;
+  }
+
+  .topbar-actions{
+    width:100%;
+    justify-content:flex-end;
+  }
+}
+
 .profile-btn{
   display:inline-flex;
   align-items:center;
@@ -724,6 +736,49 @@ body.sidebar-open .sidebar{
 @media (max-width: 768px){
   .table{ min-width:640px; }
   .hero-title{ font-size:2.35rem; }
+}
+
+@media (max-width: 600px){
+  .history-controls{
+    width:100%;
+  }
+
+  .search{
+    min-width:0;
+    width:100%;
+  }
+
+  .range{
+    width:100%;
+  }
+
+  .table{
+    min-width:0;
+  }
+
+  .table-row--head{
+    display:none;
+  }
+
+  .table-row{
+    grid-template-columns:1fr;
+    gap:0.6rem;
+    padding:0.9rem;
+  }
+
+  .table-cell{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:1rem;
+  }
+
+  .table-cell::before{
+    content:attr(data-label);
+    color:var(--muted);
+    font-weight:800;
+    letter-spacing:0.2px;
+  }
 }
 
 @media (min-width: 1024px){
