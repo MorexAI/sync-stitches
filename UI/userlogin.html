@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StitchSync | Log In</title>
+
+  <link rel="stylesheet" href="auth.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Marcellus&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Marcellus&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="auth-nav">
+    <a class="auth-logo" href="index.html">STITCH<span>SYNC</span></a>
+    <div class="auth-actions">
+      <button class="auth-btn" id="theme-toggle" type="button">🌙</button>
+      <a class="auth-btn auth-btn--primary" href="signup.html">Sign up</a>
+    </div>
+  </nav>
+
+  <main class="auth-shell">
+    <section class="auth-card">
+      <h1 class="auth-title great-vibes-regular">Welcome Back</h1>
+      <p class="auth-subtitle marcellus-regular">Log in to continue your fitting journey.</p>
+
+      <div class="auth-error marcellus-regular" id="auth-error" role="alert"></div>
+
+      <form class="auth-form" id="login-form">
+        <div class="field">
+          <label class="marcellus-regular" for="role">Account type</label>
+          <select id="role" required>
+            <option value="" selected>Select one</option>
+            <option value="manufacturer">Manufacturer</option>
+            <option value="app">App User</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="marcellus-regular" for="email">Email</label>
+          <input id="email" type="email" autocomplete="email" placeholder="you@domain.com" required>
+        </div>
+
+        <div class="field">
+          <label class="marcellus-regular" for="password">Password</label>
+          <input id="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+        </div>
+
+        <button class="auth-btn auth-btn--primary" type="submit">Log in</button>
+      </form>
+
+      <div class="auth-footer marcellus-regular">
+        New here? <a class="auth-link" href="signup.html">Create an account</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,6 +1,5 @@
 const toggleBtn = document.getElementById("theme-toggle")
 
-// Load saved theme
 if(localStorage.getItem("theme") === "dark"){
 document.body.classList.add("dark-mode")
 toggleBtn.textContent = "☀️"
@@ -20,34 +19,15 @@ toggleBtn.textContent="🌙"
 
 })
 
-// Check if user is already logged in
-function checkAccess(targetUrl) {
-    const isLoggedIn = localStorage.getItem('stitchSync_token');
-    
-    if (isLoggedIn) {
-        window.location.href = targetUrl;
-    } else {
-        showLogin();
-    }
-}
+const getStartedBtn = document.getElementById("get-started")
+const roleDialog = document.getElementById("role-dialog")
 
-function showLogin() {
-    document.getElementById('login-modal').style.display = 'flex';
-}
-
-function closeLogin() {
-    document.getElementById('login-modal').style.display = 'none';
-}
-
-function handleLogin() {
-    const email = document.getElementById('email').value;
-    // Simple prototype logic: any email works
-    if (email.includes('@')) {
-        localStorage.setItem('stitchSync_token', 'session_active_123');
-        localStorage.setItem('stitchSync_user', email);
-        alert("Login Successful. Entering the Mirror...");
-        window.location.href = 'mirror.html'; // Redirect to your previous tool
-    } else {
-        alert("Please enter a valid email.");
-    }
+if (getStartedBtn && roleDialog) {
+    getStartedBtn.addEventListener("click", () => {
+        if (typeof roleDialog.showModal === "function") {
+            roleDialog.showModal()
+            return
+        }
+        window.location.href = "signup.html"
+    })
 }

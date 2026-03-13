@@ -27,9 +27,9 @@
 <div class="nav-links">
 
 <button id="theme-toggle">🌙</button>
-<button onclick="showLogin()" class="login-btn marcellus-regular">
+<a href="userlogin.html" class="login-btn marcellus-regular">
 Login
-</button>
+</a>
 
 </div>
 
@@ -49,7 +49,7 @@ Virtual Fitting meets Precision Biometric Datas.
 </p>
 
 
-<button class="cta-button">Get Started</button>
+<button class="cta-button" id="get-started">Enter the Atelier</button>
 
 </div>
 
@@ -96,6 +96,26 @@ Virtual Fitting meets Precision Biometric Datas.
 </div>
 
 </section>
+
+<dialog class="role-dialog" id="role-dialog">
+  <form method="dialog" class="role-dialog__card">
+    <div class="role-dialog__header">
+      <div class="role-dialog__title marcellus-regular">Join StitchSync</div>
+      <button class="role-dialog__close" value="cancel" aria-label="Close">×</button>
+    </div>
+    <div class="role-dialog__body">
+      <div class="role-dialog__subtitle marcellus-regular">Sign up as</div>
+      <div class="role-dialog__actions">
+        <a class="role-dialog__btn role-dialog__btn--primary" href="signup.html?role=manufacturer">Manufacturer</a>
+        <a class="role-dialog__btn" href="signup.html?role=app">App User</a>
+      </div>
+      <div class="role-dialog__hint marcellus-regular">
+        Already have an account?
+        <a class="role-dialog__link" href="userlogin.html">Log in</a>
+      </div>
+    </div>
+  </form>
+</dialog>
 
 <script src="landing.js"></script>
 

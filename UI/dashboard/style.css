@@ -1,0 +1,83 @@
+:root {
+    --bg-color: #F8F8F8;
+    --accent: #1A1A1A;
+    --gold: #D4AF37;
+    --white: #FFFFFF;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-color);
+    margin: 0;
+    color: var(--accent);
+}
+
+.marcellus-regular {
+  font-family: "Marcellus", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.nav-link{
+    color: red;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem 5%;
+    background: var(--white);
+    border-bottom: 1px solid #a71515;
+}
+
+
+.logo { font-weight: bold; letter-spacing: 2px; font-size: 1.5rem; }
+.logo span { color: var(--gold); }
+
+.app-container {
+    display: grid;
+    grid-template-columns: 300px 1fr 300px;
+    height: calc(100vh - 80px);
+    gap: 1rem;
+    padding: 1rem;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 1024px) {
+    .app-container { grid-template-columns: 1fr; overflow-y: scroll; }
+    .sidebar { order: 2; }
+    .mirror-section { order: 1; }
+}
+
+.sidebar {
+    background: var(--white);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.canvas-container {
+    background: #DDD;
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas {
+    max-width: 90%;
+    max-height: 80%;
+    background: #FFF;
+    border: 1px solid #CCC;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    margin-top: 1rem;
+    cursor: pointer;
+}
