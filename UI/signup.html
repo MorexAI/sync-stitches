@@ -39,8 +39,30 @@
         </div>
 
         <div class="field">
-          <label class="marcellus-regular" for="name">Full name</label>
+          <label class="marcellus-regular" for="name" id="name-label">Full name</label>
           <input id="name" type="text" autocomplete="name" placeholder="Jane Doe" required>
+        </div>
+
+        <div id="manufacturer-fields" hidden>
+          <div class="field">
+            <label class="marcellus-regular" for="country">Country</label>
+            <input id="country" type="text" autocomplete="country-name" placeholder="Nigeria">
+          </div>
+
+          <div class="field">
+            <label class="marcellus-regular" for="phone">Phone</label>
+            <input id="phone" type="tel" autocomplete="tel" placeholder="+234 800 000 0000">
+          </div>
+
+          <div class="field">
+            <label class="marcellus-regular" for="state">State</label>
+            <input id="state" type="text" autocomplete="address-level1" placeholder="Lagos">
+          </div>
+
+          <div class="field">
+            <label class="marcellus-regular" for="postalCode">Postal code</label>
+            <input id="postalCode" type="text" autocomplete="postal-code" placeholder="100001">
+          </div>
         </div>
 
         <div class="field">

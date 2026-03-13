@@ -63,6 +63,14 @@ function wireSignup() {
   const roleFromQuery = getRoleFromQuery()
   if (roleSelect && roleFromQuery) roleSelect.value = roleFromQuery
 
+  const manufacturerFields = document.getElementById("manufacturer-fields")
+  const nameLabel = document.getElementById("name-label")
+  const nameInput = document.getElementById("name")
+  const countryInput = document.getElementById("country")
+  const phoneInput = document.getElementById("phone")
+  const stateInput = document.getElementById("state")
+  const postalCodeInput = document.getElementById("postalCode")
+
   const errorEl = document.getElementById("auth-error")
 
   function showError(message) {
@@ -77,6 +85,33 @@ function wireSignup() {
     errorEl.classList.remove("is-visible")
   }
 
+  function syncRoleFields() {
+    const role = String(roleSelect?.value || "").trim()
+    const isManufacturer = role === "manufacturer"
+
+    if (manufacturerFields) manufacturerFields.hidden = !isManufacturer
+
+    if (nameLabel) nameLabel.textContent = isManufacturer ? "Business name" : "Full name"
+    if (nameInput) {
+      nameInput.placeholder = isManufacturer ? "StitchSync Manufacturing Ltd" : "Jane Doe"
+      nameInput.autocomplete = isManufacturer ? "organization" : "name"
+    }
+
+    const shouldRequire = (el) => {
+      if (!el) return
+      if (isManufacturer) el.setAttribute("required", "")
+      else el.removeAttribute("required")
+    }
+
+    shouldRequire(countryInput)
+    shouldRequire(phoneInput)
+    shouldRequire(stateInput)
+    shouldRequire(postalCodeInput)
+  }
+
+  syncRoleFields()
+  if (roleSelect) roleSelect.addEventListener("change", syncRoleFields)
+
   form.addEventListener("submit", (e) => {
     e.preventDefault()
     clearError()
@@ -87,11 +122,29 @@ function wireSignup() {
     const confirm = String(document.getElementById("confirm")?.value || "")
     const role = String(roleSelect?.value || "").trim()
 
-    if (!name) return showError("Please enter your name.")
+    if (!name) return showError(role === "manufacturer" ? "Please enter your business name." : "Please enter your name.")
     if (!email.includes("@")) return showError("Please enter a valid email.")
     if (password.length < 6) return showError("Password must be at least 6 characters.")
     if (password !== confirm) return showError("Passwords do not match.")
     if (role !== "manufacturer" && role !== "app") return showError("Please choose an account type.")
+
+    const manufacturerProfile =
+      role === "manufacturer"
+        ? {
+            businessName: name,
+            country: String(countryInput?.value || "").trim(),
+            phone: String(phoneInput?.value || "").trim(),
+            state: String(stateInput?.value || "").trim(),
+            postalCode: String(postalCodeInput?.value || "").trim(),
+          }
+        : null
+
+    if (role === "manufacturer") {
+      if (!manufacturerProfile.country) return showError("Please enter your country.")
+      if (!manufacturerProfile.phone) return showError("Please enter your phone.")
+      if (!manufacturerProfile.state) return showError("Please enter your state.")
+      if (!manufacturerProfile.postalCode) return showError("Please enter your postal code.")
+    }
 
     const accounts = readAccounts()
     const existing = accounts.find((a) => String(a.email || "").toLowerCase() === email)
@@ -105,6 +158,7 @@ function wireSignup() {
       email,
       password,
       role,
+      manufacturerProfile,
       createdAt: Date.now(),
     })
 
