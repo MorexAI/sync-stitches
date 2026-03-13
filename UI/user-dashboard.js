@@ -7,6 +7,7 @@ const PROFILE_KEY = "stitchSync_appUserProfile"
 const PREFS_KEY = "stitchSync_appUserPreferences"
 const HISTORY_KEY = "stitchSync_fitHistory"
 const ACCOUNTS_KEY = "stitchSync_accounts"
+const NOTIFICATIONS_KEY = "stitchSync_notifications"
 
 const countryOptions = [
   { name: "Afghanistan", dial: "+93" },
@@ -208,6 +209,16 @@ function formatDateTime(ts) {
   return date.toLocaleString()
 }
 
+function getInitials(name) {
+  const cleaned = String(name || "").trim().replace(/\s+/g, " ")
+  if (!cleaned) return "U"
+  const parts = cleaned.split(" ")
+  const first = parts[0]?.[0] || ""
+  const last = parts.length > 1 ? parts[parts.length - 1]?.[0] || "" : ""
+  const initials = (first + last).toUpperCase()
+  return initials || "U"
+}
+
 function ensureSignedIn() {
   const token = localStorage.getItem(SESSION_TOKEN_KEY)
   const role = localStorage.getItem(SESSION_ROLE_KEY)
@@ -218,13 +229,28 @@ function ensureSignedIn() {
 
 function loadProfile() {
   const stored = readJson(PROFILE_KEY, null)
-  if (stored) return stored
+  if (stored) {
+    const next = {
+      avatarDataUrl: String(stored.avatarDataUrl || ""),
+      fullName: String(stored.fullName || stored.name || "App User"),
+      email: String(stored.email || ""),
+      country: String(stored.country || ""),
+      state: String(stored.state || ""),
+      phone: String(stored.phone || ""),
+      postalCode: String(stored.postalCode || ""),
+      membershipTier: String(stored.membershipTier || "Basic"),
+      balanceOrCredits: String(stored.balanceOrCredits || "Credits left: 12"),
+    }
+    writeJson(PROFILE_KEY, next)
+    return next
+  }
 
   const email = String(localStorage.getItem(SESSION_EMAIL_KEY) || "").trim().toLowerCase()
   const accounts = readJson(ACCOUNTS_KEY, [])
   const match = accounts.find((a) => String(a.email || "").toLowerCase() === email)
 
   const base = {
+    avatarDataUrl: "",
     fullName: String(match?.appUserProfile?.fullName || match?.name || "App User"),
     email: email || String(match?.email || ""),
     country: String(match?.contactProfile?.country || ""),
@@ -388,21 +414,50 @@ function setPhoneDialPlaceholder(phoneInput, countryName) {
 }
 
 function hydrateProfileUI(profile) {
+  const welcomeNameEl = document.getElementById("welcome-name")
   const nameEl = document.getElementById("profile-name")
   const emailEl = document.getElementById("profile-email")
   const locationEl = document.getElementById("profile-location")
   const phoneEl = document.getElementById("profile-phone")
+  const avatarEl = document.getElementById("profile-avatar")
+  const topbarNameEl = document.getElementById("topbar-name")
+  const topbarAvatarEl = document.getElementById("topbar-avatar")
   const tierEl = document.getElementById("membership-tier")
   const renewalEl = document.getElementById("membership-renewal")
   const balanceEl = document.getElementById("membership-balance")
 
-  if (nameEl) nameEl.textContent = profile.fullName || "—"
+  const displayName = profile.fullName || "—"
+  if (welcomeNameEl) welcomeNameEl.textContent = `${displayName} 👋`
+  if (nameEl) nameEl.textContent = displayName
   if (emailEl) emailEl.textContent = profile.email || "—"
   if (locationEl) {
     const parts = [profile.state, profile.country].filter(Boolean)
     locationEl.textContent = parts.length ? parts.join(", ") : "—"
   }
   if (phoneEl) phoneEl.textContent = profile.phone || "—"
+
+  if (avatarEl) {
+    const url = String(profile.avatarDataUrl || "")
+    if (url) {
+      avatarEl.style.backgroundImage = `url("${url}")`
+      avatarEl.textContent = ""
+    } else {
+      avatarEl.style.backgroundImage = "none"
+      avatarEl.textContent = getInitials(displayName)
+    }
+  }
+
+  if (topbarNameEl) topbarNameEl.textContent = displayName
+  if (topbarAvatarEl) {
+    const url = String(profile.avatarDataUrl || "")
+    if (url) {
+      topbarAvatarEl.style.backgroundImage = `url("${url}")`
+      topbarAvatarEl.textContent = ""
+    } else {
+      topbarAvatarEl.style.backgroundImage = "none"
+      topbarAvatarEl.textContent = getInitials(displayName)
+    }
+  }
 
   if (tierEl) tierEl.textContent = profile.membershipTier || "—"
   if (renewalEl) {
@@ -428,23 +483,18 @@ function hydratePreferencesUI(prefs) {
 }
 
 function wireThemeToggle() {
-  const themeToggleBtn = document.getElementById("theme-toggle")
+  const btn = document.getElementById("theme-toggle")
+  const stored = localStorage.getItem(THEME_KEY)
 
-  if (localStorage.getItem(THEME_KEY) === "dark") {
-    document.body.classList.add("dark-mode")
-    if (themeToggleBtn) themeToggleBtn.textContent = "☀️"
-  }
+  if (stored === "dark") document.body.classList.add("dark-mode")
+  if (btn) btn.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙"
 
-  if (!themeToggleBtn) return
-  themeToggleBtn.addEventListener("click", () => {
+  if (!btn) return
+  btn.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode")
-    if (document.body.classList.contains("dark-mode")) {
-      localStorage.setItem(THEME_KEY, "dark")
-      themeToggleBtn.textContent = "☀️"
-    } else {
-      localStorage.setItem(THEME_KEY, "light")
-      themeToggleBtn.textContent = "🌙"
-    }
+    const isDark = document.body.classList.contains("dark-mode")
+    localStorage.setItem(THEME_KEY, isDark ? "dark" : "light")
+    btn.textContent = isDark ? "☀️" : "🌙"
   })
 }
 
@@ -459,6 +509,45 @@ function wireLogout() {
   })
 }
 
+function wireSidebar() {
+  const profileBtn = document.getElementById("profile-btn")
+  const closeBtn = document.getElementById("menu-close-btn")
+  const sidebar = document.getElementById("sidebar")
+  const backdrop = document.getElementById("sidebar-backdrop")
+  const logoutBtn = document.getElementById("sidebar-logout")
+
+  function open() {
+    document.body.classList.add("sidebar-open")
+    if (profileBtn) profileBtn.setAttribute("aria-expanded", "true")
+  }
+
+  function close() {
+    document.body.classList.remove("sidebar-open")
+    if (profileBtn) profileBtn.setAttribute("aria-expanded", "false")
+  }
+
+  if (profileBtn) profileBtn.addEventListener("click", open)
+  if (closeBtn) closeBtn.addEventListener("click", close)
+  if (backdrop) backdrop.addEventListener("click", close)
+
+  if (sidebar) {
+    sidebar.addEventListener("click", (e) => {
+      const a = e.target?.closest?.("a[data-nav]")
+      if (!a) return
+      close()
+    })
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem(SESSION_TOKEN_KEY)
+      localStorage.removeItem(SESSION_ROLE_KEY)
+      localStorage.removeItem(SESSION_EMAIL_KEY)
+      window.location.href = "index.html"
+    })
+  }
+}
+
 function wireProfileDialog(profile) {
   const dialog = document.getElementById("profile-dialog")
   const openBtn = document.getElementById("edit-profile-btn")
@@ -466,6 +555,7 @@ function wireProfileDialog(profile) {
   const form = document.getElementById("profile-form")
 
   const fullNameEl = document.getElementById("profileFullName")
+  const avatarFileEl = document.getElementById("profileAvatar")
   const emailEl = document.getElementById("profileEmail")
   const countryEl = document.getElementById("profileCountry")
   const phoneEl = document.getElementById("profilePhone")
@@ -477,6 +567,8 @@ function wireProfileDialog(profile) {
 
   populateCountrySelect(countryEl)
 
+  let pendingAvatarDataUrl = String(profile.avatarDataUrl || "")
+
   function syncStateForCountry() {
     const c = String(countryEl?.value || "").trim()
     setStateDatalist(stateList, c)
@@ -484,6 +576,20 @@ function wireProfileDialog(profile) {
   }
 
   if (countryEl) countryEl.addEventListener("change", syncStateForCountry)
+
+  if (avatarFileEl) {
+    avatarFileEl.addEventListener("change", () => {
+      const file = avatarFileEl.files?.[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = () => {
+        pendingAvatarDataUrl = String(reader.result || "")
+        profile.avatarDataUrl = pendingAvatarDataUrl
+        hydrateProfileUI(profile)
+      }
+      reader.readAsDataURL(file)
+    })
+  }
 
   function fillForm() {
     if (fullNameEl) fullNameEl.value = profile.fullName || ""
@@ -494,6 +600,8 @@ function wireProfileDialog(profile) {
     if (postalEl) postalEl.value = profile.postalCode || ""
     if (tierEl) tierEl.value = profile.membershipTier || "Basic"
     if (balanceEl) balanceEl.value = profile.balanceOrCredits || "Credits left: 12"
+    if (avatarFileEl) avatarFileEl.value = ""
+    pendingAvatarDataUrl = String(profile.avatarDataUrl || "")
     syncStateForCountry()
   }
 
@@ -520,6 +628,7 @@ function wireProfileDialog(profile) {
       postalCode: String(postalEl?.value || "").trim(),
       membershipTier: String(tierEl?.value || "Basic").trim(),
       balanceOrCredits: String(balanceEl?.value || "").trim(),
+      avatarDataUrl: String(pendingAvatarDataUrl || profile.avatarDataUrl || ""),
     }
 
     saveProfile(next)
@@ -532,6 +641,7 @@ function wireProfileDialog(profile) {
     profile.postalCode = next.postalCode
     profile.membershipTier = next.membershipTier
     profile.balanceOrCredits = next.balanceOrCredits
+    profile.avatarDataUrl = next.avatarDataUrl
 
     hydrateProfileUI(profile)
     if (dialog) dialog.close()
@@ -592,19 +702,77 @@ function wireHistory(allItems) {
   rerender()
 }
 
+function seedNotificationsIfEmpty() {
+  const existing = readJson(NOTIFICATIONS_KEY, null)
+  if (Array.isArray(existing) && existing.length > 0) return
+
+  const now = Date.now()
+  const demo = [
+    {
+      id: "note_" + (now - 1000 * 60 * 60 * 3),
+      title: "Fit check ready",
+      message: "Your AI fit summary has been saved to history.",
+      createdAt: now - 1000 * 60 * 60 * 3,
+    },
+    {
+      id: "note_" + (now - 1000 * 60 * 60 * 24 * 4),
+      title: "Membership update",
+      message: "Upgrade anytime to unlock more fit checks.",
+      createdAt: now - 1000 * 60 * 60 * 24 * 4,
+    },
+  ]
+
+  writeJson(NOTIFICATIONS_KEY, demo)
+}
+
+function loadNotifications() {
+  const items = readJson(NOTIFICATIONS_KEY, [])
+  return Array.isArray(items) ? items : []
+}
+
+function renderNotifications(items) {
+  const list = document.getElementById("notifications-list")
+  if (!list) return
+  list.innerHTML = ""
+
+  const data = items?.slice?.().sort((a, b) => Number(b.createdAt) - Number(a.createdAt)) || []
+  if (data.length === 0) {
+    const el = document.createElement("div")
+    el.className = "notice"
+    el.innerHTML = `<div class="notice-title marcellus-regular">No notifications</div><div class="notice-meta">You're all caught up.</div>`
+    list.appendChild(el)
+    return
+  }
+
+  data.forEach((n) => {
+    const el = document.createElement("div")
+    el.className = "notice"
+    el.innerHTML = `
+      <div class="notice-title marcellus-regular">${String(n.title || "Update")}</div>
+      <div class="notice-meta">${formatDateTime(n.createdAt)}</div>
+      <div>${String(n.message || "")}</div>
+    `
+    list.appendChild(el)
+  })
+}
+
 ensureSignedIn()
 wireThemeToggle()
+wireSidebar()
 wireLogout()
 
 seedDemoDataIfEmpty()
+seedNotificationsIfEmpty()
 
 const profile = loadProfile()
 const prefs = loadPreferences()
 const history = loadHistory()
+const notifications = loadNotifications()
 
 hydrateProfileUI(profile)
 hydratePreferencesUI(prefs)
 renderHistory(history)
+renderNotifications(notifications)
 
 wireProfileDialog(profile)
 wireUpgradeDialog(profile)
