@@ -165,3 +165,20 @@ function wireLogin() {
 
 wireSignup()
 wireLogin()
+
+const passwordToggleButtons = document.querySelectorAll(".password-toggle")
+passwordToggleButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const targetId = btn.getAttribute("data-target")
+    if (!targetId) return
+    const input = document.getElementById(targetId)
+    if (!input) return
+
+    const isPassword = input.getAttribute("type") === "password"
+    input.setAttribute("type", isPassword ? "text" : "password")
+
+    btn.setAttribute("aria-pressed", isPassword ? "true" : "false")
+    btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password")
+    btn.textContent = isPassword ? "🙈" : "👁"
+  })
+})

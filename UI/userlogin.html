@@ -45,7 +45,10 @@
 
         <div class="field">
           <label class="marcellus-regular" for="password">Password</label>
-          <input id="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+          <div class="password-wrap">
+            <input id="password" type="password" autocomplete="current-password" placeholder="Your password" required>
+            <button class="password-toggle" type="button" data-target="password" aria-label="Show password" aria-pressed="false">👁</button>
+          </div>
         </div>
 
         <button class="auth-btn auth-btn--primary" type="submit">Log in</button>
