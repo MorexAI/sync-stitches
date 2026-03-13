@@ -141,6 +141,19 @@ body{
   box-shadow:0 0 0 4px rgba(167,21,21,0.14);
 }
 
+.field-row{
+  display:grid;
+  grid-template-columns: 120px 1fr;
+  gap:0.65rem;
+  align-items:center;
+}
+
+@media (max-width: 480px){
+  .field-row{
+    grid-template-columns:1fr;
+  }
+}
+
 .password-wrap{
   position:relative;
   display:flex;

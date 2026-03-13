@@ -291,7 +291,7 @@ const statesByCountry = {
     "Kano",
     "Katsina",
     "Kebbi",
-    'Kogi',
+    "Kogi",
     "Kwara",
     "Lagos",
     "Nasarawa",
@@ -308,6 +308,80 @@ const statesByCountry = {
     "Zamfara",
     "FCT",
   ],
+  Australia: [
+    "Australian Capital Territory",
+    "New South Wales",
+    "Northern Territory",
+    "Queensland",
+    "South Australia",
+    "Tasmania",
+    "Victoria",
+    "Western Australia",
+  ],
+  Germany: [
+    "Baden-Württemberg",
+    "Bavaria",
+    "Berlin",
+    "Brandenburg",
+    "Bremen",
+    "Hamburg",
+    "Hesse",
+    "Lower Saxony",
+    "Mecklenburg-Vorpommern",
+    "North Rhine-Westphalia",
+    "Rhineland-Palatinate",
+    "Saarland",
+    "Saxony",
+    "Saxony-Anhalt",
+    "Schleswig-Holstein",
+    "Thuringia",
+  ],
+  India: [
+    "Andhra Pradesh",
+    "Arunachal Pradesh",
+    "Assam",
+    "Bihar",
+    "Chhattisgarh",
+    "Goa",
+    "Gujarat",
+    "Haryana",
+    "Himachal Pradesh",
+    "Jharkhand",
+    "Karnataka",
+    "Kerala",
+    "Madhya Pradesh",
+    "Maharashtra",
+    "Manipur",
+    "Meghalaya",
+    "Mizoram",
+    "Nagaland",
+    "Odisha",
+    "Punjab",
+    "Rajasthan",
+    "Sikkim",
+    "Tamil Nadu",
+    "Telangana",
+    "Tripura",
+    "Uttar Pradesh",
+    "Uttarakhand",
+    "West Bengal",
+    "Delhi",
+    "Puducherry",
+    "Jammu and Kashmir",
+    "Ladakh",
+  ],
+  "South Africa": [
+    "Eastern Cape",
+    "Free State",
+    "Gauteng",
+    "KwaZulu-Natal",
+    "Limpopo",
+    "Mpumalanga",
+    "North West",
+    "Northern Cape",
+    "Western Cape",
+  ],
+  "United Arab Emirates": ["Abu Dhabi", "Ajman", "Dubai", "Fujairah", "Ras Al Khaimah", "Sharjah", "Umm Al Quwain"],
   "United Kingdom": ["England", "Northern Ireland", "Scotland", "Wales"],
   "United States": [
     "Alabama",
@@ -376,10 +450,12 @@ function wireSignup() {
   const nameLabel = document.getElementById("name-label")
   const nameInput = document.getElementById("name")
   const countryInput = document.getElementById("country")
+  const phoneCodeSelect = document.getElementById("phoneCode")
   const phoneInput = document.getElementById("phone")
   const stateInput = document.getElementById("state")
   const stateList = document.getElementById("state-list")
   const postalCodeInput = document.getElementById("postalCode")
+  const postalList = document.getElementById("postal-list")
 
   const errorEl = document.getElementById("auth-error")
 
@@ -415,6 +491,7 @@ function wireSignup() {
     }
 
     shouldRequire(countryInput)
+    shouldRequire(phoneCodeSelect)
     shouldRequire(phoneInput)
     shouldRequire(stateInput)
     shouldRequire(postalCodeInput)
@@ -433,21 +510,42 @@ function wireSignup() {
   }
 
   function setPhoneDialCode(countryName) {
-    if (!phoneInput) return
+    if (!phoneCodeSelect) return
     const match = countryOptions.find((c) => c.name === countryName)
     const dial = match?.dial || ""
-    if (!dial) return
-
-    const raw = String(phoneInput.value || "")
-    const trimmed = raw.trim()
-    if (!trimmed || trimmed.startsWith("+")) {
-      if (!trimmed || trimmed === dial) {
-        phoneInput.value = dial + " "
-      }
-      phoneInput.placeholder = dial + " 800 000 0000"
+    if (!dial) {
+      phoneCodeSelect.value = ""
       return
     }
-    phoneInput.placeholder = dial + " 800 000 0000"
+
+    phoneCodeSelect.value = dial
+    if (phoneInput && !String(phoneInput.placeholder || "")) {
+      phoneInput.placeholder = "Phone number"
+    }
+  }
+
+  function setPostalSuggestions(countryName) {
+    if (!postalList) return
+    postalList.innerHTML = ""
+
+    const examplesByCountry = {
+      Canada: ["M5V 2T6", "H1A 0A1"],
+      Nigeria: ["100001", "101001"],
+      "United Kingdom": ["SW1A 1AA", "EC1A 1BB"],
+      "United States": ["10001", "94105"],
+    }
+
+    const defaults = ["100001", "10001", "SW1A 1AA", "M5V 2T6"]
+    const list = examplesByCountry[countryName] || defaults
+    list.forEach((value) => {
+      const opt = document.createElement("option")
+      opt.value = value
+      postalList.appendChild(opt)
+    })
+
+    if (postalCodeInput && !String(postalCodeInput.value || "").trim()) {
+      postalCodeInput.placeholder = list[0] || "Postal code"
+    }
   }
 
   function populateCountries() {
@@ -465,14 +563,32 @@ function wireSignup() {
     })
   }
 
+  function populatePhoneCodes() {
+    if (!phoneCodeSelect) return
+    if (phoneCodeSelect.tagName !== "SELECT") return
+    if (phoneCodeSelect.options.length > 1) return
+
+    const dials = [...new Set(countryOptions.map((c) => String(c.dial || "").trim()).filter(Boolean))].sort(
+      (a, b) => a.localeCompare(b)
+    )
+    dials.forEach((dial) => {
+      const opt = document.createElement("option")
+      opt.value = dial
+      opt.textContent = dial
+      phoneCodeSelect.appendChild(opt)
+    })
+  }
+
   function handleCountryChange() {
     const countryName = String(countryInput?.value || "").trim()
     setStateSuggestions(countryName)
     setPhoneDialCode(countryName)
+    setPostalSuggestions(countryName)
     if (stateInput) stateInput.placeholder = statesByCountry[countryName] ? "Select or type..." : "Start typing..."
   }
 
   populateCountries()
+  populatePhoneCodes()
   handleCountryChange()
   if (countryInput) countryInput.addEventListener("change", handleCountryChange)
 
@@ -495,15 +611,22 @@ function wireSignup() {
     if (password !== confirm) return showError("Passwords do not match.")
     if (role !== "manufacturer" && role !== "app") return showError("Please choose an account type.")
 
+    const countryName = String(countryInput?.value || "").trim()
+    const expectedDial = String(countryOptions.find((c) => c.name === countryName)?.dial || "").trim()
+    const phoneCode = String(phoneCodeSelect?.value || "").trim()
+    const phoneNumber = String(phoneInput?.value || "").trim()
+    const phoneCombined = phoneCode ? (phoneCode + " " + phoneNumber) : phoneNumber
+
     const contactProfile = {
-      country: String(countryInput?.value || "").trim(),
-      phone: String(phoneInput?.value || "").trim(),
+      country: countryName,
+      phone: phoneCombined,
       state: String(stateInput?.value || "").trim(),
       postalCode: String(postalCodeInput?.value || "").trim(),
     }
 
     if (!contactProfile.country) return showError("Please select your country.")
-    if (!contactProfile.phone) return showError("Please enter your phone.")
+    if (!phoneNumber) return showError("Please enter your phone number.")
+    if (expectedDial && !phoneCode) return showError("Please select your phone code.")
     if (!contactProfile.state) return showError("Please enter your state.")
     if (!contactProfile.postalCode) return showError("Please enter your postal code.")
 
