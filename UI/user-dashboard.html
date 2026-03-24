@@ -41,6 +41,9 @@
         <a class="sidebar-link marcellus-regular" href="#notifications" data-nav="notifications">
           <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🔔</span>Notifications</span>
         </a>
+        <a class="sidebar-link marcellus-regular" href="#measurements" data-nav="measurements">
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">📏</span>Measurements</span>
+        </a>
         <a class="sidebar-link marcellus-regular" href="#history" data-nav="history">
           <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🕘</span>History</span>
         </a>
@@ -48,6 +51,35 @@
           <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🚪</span>Log out</span>
         </button>
       </nav>
+    </aside>
+
+    <button class="measurements-backdrop" id="measurements-backdrop" type="button" aria-label="Close measurements"></button>
+    <aside class="measurements-panel" id="measurements-panel" aria-label="Measurements panel">
+      <div class="measurements-panel-head">
+        <div class="measurements-panel-title marcellus-regular">Measurements</div>
+        <button class="icon-btn" id="measurements-close-btn" type="button" aria-label="Close measurements">×</button>
+      </div>
+      <div class="measurements-panel-body">
+        <form class="measurements" id="measurements-form">
+          <div class="field">
+            <label class="marcellus-regular" for="mHeight">Height (cm)</label>
+            <input id="mHeight" type="number" min="80" max="250" inputmode="numeric" placeholder="170" required>
+          </div>
+          <div class="field">
+            <label class="marcellus-regular" for="mChest">Chest (cm)</label>
+            <input id="mChest" type="number" min="40" max="200" inputmode="numeric" placeholder="96" required>
+          </div>
+          <div class="field">
+            <label class="marcellus-regular" for="mWaist">Waist (cm)</label>
+            <input id="mWaist" type="number" min="35" max="200" inputmode="numeric" placeholder="82" required>
+          </div>
+          <div class="field">
+            <label class="marcellus-regular" for="mHip">Hip (cm)</label>
+            <input id="mHip" type="number" min="40" max="220" inputmode="numeric" placeholder="98" required>
+          </div>
+          <button class="pill-btn pill-btn--primary" type="submit">Save Measurements</button>
+        </form>
+      </div>
     </aside>
 
     <aside class="history-panel" id="history-panel" aria-label="History panel">
@@ -71,7 +103,6 @@
         <article class="card" id="settings" aria-label="Profile settings">
           <div class="card-head">
             <h2 class="card-title marcellus-regular">Profile</h2>
-            <button class="pill-btn pill-btn--primary" id="edit-profile-btn" type="button">Edit Profile</button>
           </div>
 
           <div class="profile">
@@ -93,31 +124,6 @@
               </div>
             </div>
           </div>
-        </article>
-
-        <article class="card" aria-label="Body Measurements">
-          <div class="card-head">
-            <h2 class="card-title marcellus-regular">Body Measurements</h2>
-          </div>
-          <form class="measurements" id="measurements-form">
-            <div class="field">
-              <label class="marcellus-regular" for="mHeight">Height (cm)</label>
-              <input id="mHeight" type="number" min="80" max="250" inputmode="numeric" placeholder="170" required>
-            </div>
-            <div class="field">
-              <label class="marcellus-regular" for="mChest">Chest (cm)</label>
-              <input id="mChest" type="number" min="40" max="200" inputmode="numeric" placeholder="96" required>
-            </div>
-            <div class="field">
-              <label class="marcellus-regular" for="mWaist">Waist (cm)</label>
-              <input id="mWaist" type="number" min="35" max="200" inputmode="numeric" placeholder="82" required>
-            </div>
-            <div class="field">
-              <label class="marcellus-regular" for="mHip">Hip (cm)</label>
-              <input id="mHip" type="number" min="40" max="220" inputmode="numeric" placeholder="98" required>
-            </div>
-            <button class="pill-btn pill-btn--primary" type="submit">Save Measurements</button>
-          </form>
         </article>
 
         <article class="card" aria-label="Membership and Billing">
@@ -142,6 +148,18 @@
                 <button class="icon-btn icon-btn--sm" id="balance-toggle" type="button" aria-label="Show balance" aria-pressed="false">👁</button>
               </div>
             </div>
+          </div>
+        </article>
+
+        <article class="card" aria-label="Quick actions">
+          <div class="card-head">
+            <h2 class="card-title marcellus-regular">Quick Actions</h2>
+          </div>
+          <div class="quick-actions">
+            <button class="quick-action marcellus-regular" id="qa-open-history" type="button">Open History</button>
+            <button class="quick-action marcellus-regular" id="qa-open-measurements" type="button">Update Measurements</button>
+            <button class="quick-action marcellus-regular" id="qa-open-notifications" type="button">View Notifications</button>
+            <button class="quick-action marcellus-regular" id="qa-open-settings" type="button">Settings</button>
           </div>
         </article>
       </section>

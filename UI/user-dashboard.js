@@ -676,6 +676,18 @@ function wireBalanceToggle(profile) {
   })
 }
 
+function fillMeasurementsForm(profile) {
+  const heightEl = document.getElementById("mHeight")
+  const chestEl = document.getElementById("mChest")
+  const waistEl = document.getElementById("mWaist")
+  const hipEl = document.getElementById("mHip")
+  const m = profile.measurements || {}
+  if (heightEl && Number.isFinite(Number(m.heightCm))) heightEl.value = String(m.heightCm)
+  if (chestEl && Number.isFinite(Number(m.chestCm))) chestEl.value = String(m.chestCm)
+  if (waistEl && Number.isFinite(Number(m.waistCm))) waistEl.value = String(m.waistCm)
+  if (hipEl && Number.isFinite(Number(m.hipCm))) hipEl.value = String(m.hipCm)
+}
+
 function wireMeasurements(profile) {
   const form = document.getElementById("measurements-form")
   if (!form) return
@@ -685,15 +697,7 @@ function wireMeasurements(profile) {
   const waistEl = document.getElementById("mWaist")
   const hipEl = document.getElementById("mHip")
 
-  function fill() {
-    const m = profile.measurements || {}
-    if (heightEl && Number.isFinite(Number(m.heightCm))) heightEl.value = String(m.heightCm)
-    if (chestEl && Number.isFinite(Number(m.chestCm))) chestEl.value = String(m.chestCm)
-    if (waistEl && Number.isFinite(Number(m.waistCm))) waistEl.value = String(m.waistCm)
-    if (hipEl && Number.isFinite(Number(m.hipCm))) hipEl.value = String(m.hipCm)
-  }
-
-  fill()
+  fillMeasurementsForm(profile)
 
   form.addEventListener("submit", (e) => {
     e.preventDefault()
@@ -752,13 +756,52 @@ function wireLogout() {
   })
 }
 
-function wireSidebar() {
+function openProfileDialog(profile) {
+  const dialog = document.getElementById("profile-dialog")
+  if (!dialog) return
+
+  const fullNameEl = document.getElementById("profileFullName")
+  const usernameEl = document.getElementById("profileUsername")
+  const emailEl = document.getElementById("profileEmail")
+  const countryEl = document.getElementById("profileCountry")
+  const stateEl = document.getElementById("profileState")
+  const stateList = document.getElementById("profile-state-list")
+  const cityEl = document.getElementById("profileCity")
+  const cityList = document.getElementById("profile-city-list")
+  const postalEl = document.getElementById("profilePostalCode")
+  const dobEl = document.getElementById("profileDob")
+  const tierEl = document.getElementById("profileTier")
+  const balanceEl = document.getElementById("profileBalance")
+
+  populateCountrySelect(countryEl)
+
+  const c = String(profile.country || "").trim()
+  if (stateList) setStateDatalist(stateList, c)
+  if (cityList) setCityDatalist(cityList, c)
+
+  if (fullNameEl) fullNameEl.value = profile.fullName || ""
+  if (emailEl) emailEl.value = profile.email || ""
+  if (usernameEl) usernameEl.value = profile.username ? `@${profile.username}` : ""
+  if (countryEl) countryEl.value = profile.country || ""
+  if (stateEl) stateEl.value = profile.state || ""
+  if (cityEl) cityEl.value = profile.city || ""
+  if (postalEl) postalEl.value = profile.postalCode || ""
+  if (dobEl) dobEl.value = profile.dob || ""
+  if (tierEl) tierEl.value = profile.membershipTier || "Basic"
+  if (balanceEl) balanceEl.value = profile.balanceOrCredits || "Credits left: 12"
+
+  if (typeof dialog.showModal === "function") dialog.showModal()
+}
+
+function wireSidebar(profile) {
   const profileBtn = document.getElementById("profile-btn")
   const closeBtn = document.getElementById("menu-close-btn")
   const sidebar = document.getElementById("sidebar")
   const backdrop = document.getElementById("sidebar-backdrop")
   const historyBackdrop = document.getElementById("history-backdrop")
   const historyCloseBtn = document.getElementById("history-close-btn")
+  const measurementsBackdrop = document.getElementById("measurements-backdrop")
+  const measurementsCloseBtn = document.getElementById("measurements-close-btn")
   const logoutBtn = document.getElementById("sidebar-logout")
   const notificationsDialog = document.getElementById("notifications-dialog")
 
@@ -773,6 +816,7 @@ function wireSidebar() {
   }
 
   function openHistory() {
+    document.body.classList.remove("measurements-open")
     document.body.classList.add("history-open")
   }
 
@@ -780,21 +824,45 @@ function wireSidebar() {
     document.body.classList.remove("history-open")
   }
 
+  function openMeasurements() {
+    document.body.classList.remove("history-open")
+    document.body.classList.add("measurements-open")
+  }
+
+  function closeMeasurements() {
+    document.body.classList.remove("measurements-open")
+  }
+
   if (profileBtn) profileBtn.addEventListener("click", open)
   if (closeBtn) closeBtn.addEventListener("click", close)
   if (backdrop) backdrop.addEventListener("click", close)
   if (historyBackdrop) historyBackdrop.addEventListener("click", closeHistory)
   if (historyCloseBtn) historyCloseBtn.addEventListener("click", closeHistory)
+  if (measurementsBackdrop) measurementsBackdrop.addEventListener("click", closeMeasurements)
+  if (measurementsCloseBtn) measurementsCloseBtn.addEventListener("click", closeMeasurements)
 
   if (sidebar) {
     sidebar.addEventListener("click", (e) => {
       const a = e.target?.closest?.("a[data-nav]")
       if (!a) return
       const nav = String(a.getAttribute("data-nav") || "").trim()
+      if (nav === "settings") {
+        e.preventDefault()
+        close()
+        openProfileDialog(profile)
+        return
+      }
       if (nav === "notifications") {
         e.preventDefault()
         renderNotifications(loadNotifications())
         if (notificationsDialog && typeof notificationsDialog.showModal === "function") notificationsDialog.showModal()
+        close()
+        return
+      }
+      if (nav === "measurements") {
+        e.preventDefault()
+        fillMeasurementsForm(profile)
+        openMeasurements()
         close()
         return
       }
@@ -816,6 +884,41 @@ function wireSidebar() {
       localStorage.removeItem(SESSION_EMAIL_KEY)
       window.location.href = "index.html"
     })
+  }
+}
+
+function wireQuickActions(profile) {
+  const openHistoryBtn = document.getElementById("qa-open-history")
+  const openMeasurementsBtn = document.getElementById("qa-open-measurements")
+  const openNotificationsBtn = document.getElementById("qa-open-notifications")
+  const openSettingsBtn = document.getElementById("qa-open-settings")
+  const notificationsDialog = document.getElementById("notifications-dialog")
+
+  if (openHistoryBtn) {
+    openHistoryBtn.addEventListener("click", () => {
+      document.body.classList.remove("measurements-open")
+      renderHistoryTimeline(loadHistory(), "history-panel-timeline")
+      document.body.classList.add("history-open")
+    })
+  }
+
+  if (openMeasurementsBtn) {
+    openMeasurementsBtn.addEventListener("click", () => {
+      document.body.classList.remove("history-open")
+      fillMeasurementsForm(profile)
+      document.body.classList.add("measurements-open")
+    })
+  }
+
+  if (openNotificationsBtn) {
+    openNotificationsBtn.addEventListener("click", () => {
+      renderNotifications(loadNotifications())
+      if (notificationsDialog && typeof notificationsDialog.showModal === "function") notificationsDialog.showModal()
+    })
+  }
+
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener("click", () => openProfileDialog(profile))
   }
 }
 
@@ -1039,18 +1142,18 @@ function renderNotifications(items) {
 }
 
 ensureSignedIn()
-wireThemeToggle()
-wireSidebar()
-wireLogout()
-
 seedDemoDataIfEmpty()
 seedNotificationsIfEmpty()
 
 const profile = loadProfile()
 
-hydrateProfileUI(profile)
-
+wireThemeToggle()
 wireProfileDialog(profile)
+wireSidebar(profile)
+wireLogout()
+
+hydrateProfileUI(profile)
 wireUpgradeDialog(profile)
 wireBalanceToggle(profile)
 wireMeasurements(profile)
+wireQuickActions(profile)
