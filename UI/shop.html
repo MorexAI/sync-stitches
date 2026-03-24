@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StitchSync | Designers Wear</title>
+  <link rel="stylesheet" href="landing.css">
+  <link rel="stylesheet" href="shop.css">
+  <link rel="stylesheet" href="responsive.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">STITCH<span>SYNC</span></div>
+    <div class="nav-links">
+      <a href="index.html" class="login-btn marcellus-regular">Home</a>
+    </div>
+  </nav>
+
+  <main class="shop-shell">
+    <header class="shop-hero">
+      <h1 class="shop-title marcellus-regular">Designers Wear</h1>
+      <p class="shop-sub marcellus-regular">Explore shirts from top labels and check your fit instantly.</p>
+    </header>
+
+    <section class="shop-grid" id="shop-grid"></section>
+  </main>
+
+  <dialog class="fit-dialog" id="fit-dialog">
+    <form method="dialog" class="fit-card">
+      <div class="fit-head">
+        <div class="fit-title marcellus-regular" id="fit-title">Fit Check</div>
+        <button class="icon-btn" value="cancel" aria-label="Close">×</button>
+      </div>
+      <div class="fit-body" id="fit-body"></div>
+      <div class="fit-actions">
+        <a class="pill-btn pill-btn--ghost" href="user-dashboard.html">Update measurements</a>
+        <button class="pill-btn pill-btn--primary" value="cancel">Done</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="shop.js"></script>
+  <script src="shared/back-button.js"></script>
+</body>
+</html>
+

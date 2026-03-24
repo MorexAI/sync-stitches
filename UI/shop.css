@@ -1,0 +1,121 @@
+.shop-shell{
+  padding:6.5rem 5% 4rem;
+}
+
+.shop-hero{
+  text-align:center;
+  margin-bottom:1.25rem;
+}
+
+.shop-title{
+  font-size:2.2rem;
+  letter-spacing:0.3px;
+  margin:0.25rem 0;
+}
+
+.shop-sub{
+  opacity:0.88;
+}
+
+.shop-grid{
+  display:grid;
+  grid-template-columns:repeat(5, 1fr);
+  gap:1rem;
+}
+
+.card-p{
+  border:1px solid rgba(0,0,0,0.12);
+  border-radius:16px;
+  background:rgba(255,255,255,0.35);
+  box-shadow:0 18px 50px rgba(0,0,0,0.08);
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.card-p__img{
+  width:100%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  display:block;
+}
+
+.card-p__body{
+  display:flex;
+  flex-direction:column;
+  gap:0.4rem;
+  padding:0.9rem;
+}
+
+.card-p__brand{
+  font-weight:900;
+  letter-spacing:0.3px;
+}
+
+.card-p__name{
+  color:var(--muted);
+}
+
+.card-p__actions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:0.6rem;
+  margin-top:0.35rem;
+}
+
+.pill-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:0.5rem;
+  padding:0.7rem 1rem;
+  border-radius:999px;
+  border:1px solid var(--card-border);
+  background:transparent;
+  color:var(--text-color);
+  cursor:pointer;
+  font-weight:700;
+  text-decoration:none;
+}
+
+.pill-btn--primary{
+  border-color:var(--accent);
+  background:linear-gradient(135deg, var(--accent), #d84a4a);
+  color:#fff;
+}
+
+.fit-dialog{
+  border:none;
+  padding:0;
+  background:transparent;
+}
+.fit-dialog::backdrop{ background:rgba(0,0,0,0.55); }
+.fit-card{
+  width:min(560px, 92vw);
+  margin:auto;
+  border-radius:18px;
+  border:1px solid var(--card-border);
+  background:var(--nav-bg);
+  color:var(--text-color);
+  padding:1.1rem;
+  box-shadow:var(--shadow);
+}
+.fit-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:0.85rem; }
+.fit-title{ font-size:1.35rem; }
+.fit-body{ display:flex; flex-direction:column; gap:0.7rem; }
+.fit-actions{ display:flex; justify-content:flex-end; gap:0.7rem; margin-top:1rem; }
+
+@media screen and (max-width: 1200px){
+  .shop-grid{ grid-template-columns:repeat(4, 1fr); }
+}
+@media screen and (max-width: 900px){
+  .shop-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+@media screen and (max-width: 680px){
+  .shop-grid{ grid-template-columns:repeat(2, 1fr); }
+}
+@media screen and (max-width: 420px){
+  .shop-grid{ grid-template-columns:1fr; }
+}
+
