@@ -2,7 +2,7 @@ const themeToggleBtn = document.getElementById("theme-toggle")
 
 if (localStorage.getItem("theme") === "dark") {
   document.body.classList.add("dark-mode")
-  if (themeToggleBtn) themeToggleBtn.textContent = "☀️"
+  if (themeToggleBtn) themeToggleBtn.innerHTML = '<i class="ri-sun-line"></i>'
 }
 
 if (themeToggleBtn) {
@@ -10,10 +10,10 @@ if (themeToggleBtn) {
     document.body.classList.toggle("dark-mode")
     if (document.body.classList.contains("dark-mode")) {
       localStorage.setItem("theme", "dark")
-      themeToggleBtn.textContent = "☀️"
+      themeToggleBtn.innerHTML = '<i class="ri-sun-line"></i>'
     } else {
       localStorage.setItem("theme", "light")
-      themeToggleBtn.textContent = "🌙"
+      themeToggleBtn.innerHTML = '<i class="ri-moon-line"></i>'
     }
   })
 }
@@ -801,6 +801,6 @@ passwordToggleButtons.forEach((btn) => {
 
     btn.setAttribute("aria-pressed", isPassword ? "true" : "false")
     btn.setAttribute("aria-label", isPassword ? "Hide password" : "Show password")
-    btn.textContent = isPassword ? "/" : "👁"
+    btn.innerHTML = isPassword ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>'
   })
 })

@@ -7,6 +7,8 @@
 
   <link rel="stylesheet" href="user-dashboard.css">
   <link rel="stylesheet" href="shared/back-button.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="shared/back-button.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +21,7 @@
     <a class="brand" href="index.html">STITCH<span>SYNC</span></a>
     <div class="topbar-actions">
       <span class="role-badge marcellus-regular">App User</span>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle theme">🌙</button>
+      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Toggle theme"><i class="ri-moon-line"></i></button>
       <button class="profile-btn" id="profile-btn" type="button" aria-label="Open menu" aria-expanded="false">
         <span class="profile-btn__avatar" id="topbar-avatar"></span>
         <span class="profile-btn__name marcellus-regular" id="topbar-name">Profile</span>
@@ -37,19 +39,19 @@
       </div>
       <nav class="sidebar-nav">
         <a class="sidebar-link marcellus-regular" href="#settings" data-nav="settings">
-          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">⚙️</span>Settings</span>
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true"><i class="ri-settings-3-line"></i></span>Settings</span>
         </a>
         <a class="sidebar-link marcellus-regular" href="#notifications" data-nav="notifications">
-          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🔔</span>Notifications</span>
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true"><i class="ri-notification-3-line"></i></span>Notifications</span>
         </a>
         <a class="sidebar-link marcellus-regular" href="#measurements" data-nav="measurements">
-          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">📏</span>Measurements</span>
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true"><i class="ri-ruler-line"></i></span>Measurements</span>
         </a>
         <a class="sidebar-link marcellus-regular" href="#history" data-nav="history">
-          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🕘</span>History</span>
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true"><i class="ri-time-line"></i></span>History</span>
         </a>
         <button class="sidebar-link sidebar-link--danger marcellus-regular" id="sidebar-logout" type="button">
-          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true">🚪</span>Log out</span>
+          <span class="sidebar-link__left"><span class="sidebar-icon" aria-hidden="true"><i class="ri-logout-box-r-line"></i></span>Log out</span>
         </button>
       </nav>
     </aside>
@@ -96,7 +98,7 @@
     <main class="shell">
       <section class="hero">
         <div class="welcome marcellus-regular">Welcome back!</div>
-        <h1 class="hero-title marcellus-regular" id="welcome-name">— ✨</h1>
+        <h1 class="hero-title marcellus-regular" id="welcome-name">—</h1>
         <p class="hero-subtitle marcellus-regular">Your profile, measurements, and fit history.</p>
       </section>
 
@@ -146,7 +148,7 @@
               <div class="billing-label marcellus-regular">Balance / Credits</div>
               <div class="billing-balance">
                 <div class="billing-value billing-value--balance" id="membership-balance">—</div>
-                <button class="icon-btn icon-btn--sm" id="balance-toggle" type="button" aria-label="Show balance" aria-pressed="false">👁</button>
+                <button class="icon-btn icon-btn--sm" id="balance-toggle" type="button" aria-label="Show balance" aria-pressed="false"><i class="ri-eye-line"></i></button>
               </div>
             </div>
           </div>

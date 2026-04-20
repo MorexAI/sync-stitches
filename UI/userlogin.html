@@ -7,6 +7,8 @@
 
   <link rel="stylesheet" href="auth.css">
   <link rel="stylesheet" href="shared/back-button.css">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="shared/back-button.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,7 +19,7 @@
   <nav class="auth-nav">
     <a class="auth-logo" href="index.html">STITCH<span>SYNC</span></a>
     <div class="auth-actions">
-      <button class="auth-btn" id="theme-toggle" type="button">🌙</button>
+      <button class="auth-btn" id="theme-toggle" type="button" aria-label="Toggle theme"><i class="ri-moon-line"></i></button>
       <a class="auth-btn auth-btn--primary" href="signup.html">Sign up</a>
     </div>
   </nav>
@@ -48,7 +50,7 @@
           <label class="marcellus-regular" for="password">Password</label>
           <div class="password-wrap">
             <input id="password" type="password" autocomplete="current-password" placeholder="Your password" required>
-            <button class="password-toggle" type="button" data-target="password" aria-label="Show password" aria-pressed="false">👁</button>
+            <button class="password-toggle" type="button" data-target="password" aria-label="Show password" aria-pressed="false"><i class="ri-eye-line"></i></button>
           </div>
         </div>
 

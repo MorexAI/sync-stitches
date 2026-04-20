@@ -608,7 +608,7 @@ function hydrateProfileUI(profile) {
   const balanceEl = document.getElementById("membership-balance")
 
   const displayName = profile.fullName || "—"
-  if (welcomeNameEl) welcomeNameEl.textContent = `${displayName} 👋`
+  if (welcomeNameEl) welcomeNameEl.textContent = `${displayName}`
   if (nameEl) nameEl.textContent = displayName
   if (usernameEl) usernameEl.textContent = profile.username ? `@${profile.username}` : "—"
   if (sizeFitEl) {
@@ -664,7 +664,7 @@ function wireBalanceToggle(profile) {
     const visible = getBalanceVisible()
     const raw = profile.balanceOrCredits || "—"
     balanceEl.textContent = visible ? raw : maskDigits(raw)
-    btn.textContent = visible ? "🙈" : "👁"
+    btn.innerHTML = visible ? '<i class="ri-eye-off-line"></i>' : '<i class="ri-eye-line"></i>'
     btn.setAttribute("aria-pressed", visible ? "true" : "false")
     btn.setAttribute("aria-label", visible ? "Hide balance" : "Show balance")
   }
@@ -734,14 +734,14 @@ function wireThemeToggle() {
   const stored = localStorage.getItem(THEME_KEY)
 
   if (stored === "dark") document.body.classList.add("dark-mode")
-  if (btn) btn.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙"
+  if (btn) btn.innerHTML = document.body.classList.contains("dark-mode") ? '<i class="ri-sun-line"></i>' : '<i class="ri-moon-line"></i>'
 
   if (!btn) return
   btn.addEventListener("click", () => {
     document.body.classList.toggle("dark-mode")
     const isDark = document.body.classList.contains("dark-mode")
     localStorage.setItem(THEME_KEY, isDark ? "dark" : "light")
-    btn.textContent = isDark ? "☀️" : "🌙"
+    btn.innerHTML = isDark ? '<i class="ri-sun-line"></i>' : '<i class="ri-moon-line"></i>'
   })
 }
 
